@@ -1,0 +1,71 @@
+Allgemeine Einstellungen?
+
+1 |2 |3 |4 |5 |6 |7 |8 |9 |10|11|12|13|14|15|16
+FF|FF|FF|FF|FF|FF|FF|FF|00|3C|1D|00|00|07|01|00
+
+BYTE	Bedeutung
+1	Bitmaske für zu ändernde Bytes (Byte 9)
+2	Bitmaske für zu ändernde Bytes (Byte 10)
+3	Bitmaske für zu ändernde Bytes (Byte 11)
+4	Bitmaske für zu ändernde Bytes (Byte 12)
+5	Bitmaske für zu ändernde Bytes (Byte 13)
+6	Bitmaske für zu ändernde Bytes (Byte 14)
+7	Bitmaske für zu ändernde Bytes (Byte 15)
+8	Bitmaske für zu ändernde Bytes (Byte 16)
+9	Entfernung von Ladestation Vorkommastelle (0)
+10	Entfernung von Ladestation Nachkommastelle (,60 m)
+11	Überfahren der Schleife in cm (29 cm)
+12
+13	Garage ON-OFF
+14
+15	Eco Mode ON-OFF
+16
+
+Bereichskonfig
+1 |2 |3 |4 |5 |6 |7 |8 |9 |10|11|12|13|14|15|16|17|18
+02|0E|00|5A|00|00|02|1E|00|19|01|01|02|3C|00|28|00|01
+
+BYTE	Bedeutung
+----------------------------------
+1 	???
+----------------------------------
+Bereich 1
+----------------------------------
+2	Entfernung von Ladestation in m
+3	
+4	Häufigkeit des Mähstarts in %
+5	Startpunkt aktiv/inaktiv
+6 	CorridorCut aktiv/inaktiv
+----------------------------------
+7	???
+----------------------------------
+Bereich 2
+----------------------------------
+8	s.o.
+9
+10	s.o.
+11	s.o.
+12	s.o.
+----------------------------------
+13	???
+----------------------------------
+Bereich 3
+----------------------------------
+14	s.o.
+15	
+16	s.o.
+17	s.o.
+18	s.o.
+
+Statuszahl
+/network/<id-gw??>/device/<id-mower??>/service/<id-??>/value/<id-??>
+
+10.0 = Mäher Deaktiviert (STOP gedrückt)
+14.0 = Mäher aktiviert, kein Schleifensignal
+
+
+Winterschlaf aktivieren
+<data>F60701120000</data>
+
+Winterschlaf deaktivieren
+<data>B20701010000</data>
