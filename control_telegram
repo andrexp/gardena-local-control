@@ -1,41 +1,41 @@
-Allgemeine Einstellungen?
+Generic Settings
 
 1 |2 |3 |4 |5 |6 |7 |8 |9 |10|11|12|13|14|15|16
 FF|FF|FF|FF|FF|FF|FF|FF|00|3C|1D|00|00|07|01|00
 
-BYTE	Bedeutung
-1	Bitmaske für zu ändernde Bytes (Byte 9)
-2	Bitmaske für zu ändernde Bytes (Byte 10)
-3	Bitmaske für zu ändernde Bytes (Byte 11)
-4	Bitmaske für zu ändernde Bytes (Byte 12)
-5	Bitmaske für zu ändernde Bytes (Byte 13)
-6	Bitmaske für zu ändernde Bytes (Byte 14)
-7	Bitmaske für zu ändernde Bytes (Byte 15)
-8	Bitmaske für zu ändernde Bytes (Byte 16)
-9	Entfernung von Ladestation Vorkommastelle (0)
-10	Entfernung von Ladestation Nachkommastelle (,60 m)
-11	Überfahren der Schleife in cm (29 cm)
+BYTE	Meaning
+1	Bitmask for changing bytes (Byte 9)
+2	Bitmask for changing bytes (Byte 10)
+3	Bitmask for changing bytes (Byte 11)
+4	Bitmask for changing bytes (Byte 12)
+5	Bitmask for changing bytes (Byte 13)
+6	Bitmask for changing bytes (Byte 14)
+7	Bitmask for changing bytes (Byte 15)
+8	Bitmask for changing bytes (Byte 16)
+9	Distance to charging station pre-decimal (0)
+10	Distance to charging station decimal (,60 m)
+11	Drive past wire in cm (29 cm)
 12
 13	Garage ON-OFF
 14
 15	Eco Mode ON-OFF
 16
 
-Bereichskonfig
+Garden zone-settings
 1 |2 |3 |4 |5 |6 |7 |8 |9 |10|11|12|13|14|15|16|17|18
 02|0E|00|5A|00|00|02|1E|00|19|01|01|02|3C|00|28|00|01
 
-BYTE	Bedeutung
+BYTE	Meaning
 ----------------------------------
 1 	???
 ----------------------------------
-Bereich 1
+Zone 1
 ----------------------------------
-2	Entfernung von Ladestation in m
+2	Distance from charging station in m
 3	
-4	Häufigkeit des Mähstarts in %
-5	Startpunkt aktiv/inaktiv
-6 	CorridorCut aktiv/inaktiv
+4	Frequency of mowing start in %
+5	Startpoint active/inactive
+6 	CorridorCut active/inactive
 ----------------------------------
 7	???
 ----------------------------------
@@ -57,15 +57,15 @@ Bereich 3
 17	s.o.
 18	s.o.
 
-Statuszahl
+StatusID
 /network/<id-gw??>/device/<id-mower??>/service/<id-??>/value/<id-??>
 
-10.0 = Mäher Deaktiviert (STOP gedrückt)
-14.0 = Mäher aktiviert, kein Schleifensignal
+10.0 = Mower deactivated (STOP was hit)
+14.0 = Mower activated, no wire signal
 
 
-Winterschlaf aktivieren
+Activate hibernation
 <data>F60701120000</data>
 
-Winterschlaf deaktivieren
+Deactivate hibernation, same as start with schedule
 <data>B20701010000</data>
