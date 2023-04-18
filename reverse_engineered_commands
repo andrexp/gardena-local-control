@@ -1,0 +1,20 @@
+Park mower until further notice
+Start mower with schedule
+Wake up from hibernation
+b'[{"entity":{"device":"<mower-id>","path":"lemonbeat/0"},"metadata":{"sequence":25,"source":"lemonbeatd"},"op":"update","payload":{"action_paused_until_1":{"ts":1681853351,"vo":"sgcBAQAA"}}}]'
+
+Decoded "vo" in hex:
+b20701010000
+
+Start mower manually with 1h mow duration
+b'[{"entity":{"device":"<mower-id>","path":"lemonbeat/0"},"metadata":{"sequence":59,"source":"lemonbeatd"},"op":"update","payload":{"mower_timer":{"ts":1681853975,"vi":3600}}}]'
+
+Park mower until next schedule
+b'[{"entity":{"device":"<mower-id>","path":"lemonbeat/0"},"metadata":{"sequence":79,"source":"lemonbeatd"},"op":"update","payload":{"mower_timer":{"ts":1681855249,"vi":0}}}]'
+
+Activate hibernation
+b'[{"entity":{"device":"<mower-id>","path":"lemonbeat/0"},"metadata":{"sequence":103,"source":"lemonbeatd"},"op":"update","payload":{"action_paused_until_1":{"ts":1681855378,"vo":"9gcBEgAA"}}}]'
+
+Decoded "vo" in hex:
+f60701120000
+
