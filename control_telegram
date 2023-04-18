@@ -39,23 +39,23 @@ Zone 1
 ----------------------------------
 7	???
 ----------------------------------
-Bereich 2
+Zone 2
 ----------------------------------
-8	s.o.
+8	see above
 9
-10	s.o.
-11	s.o.
-12	s.o.
+10	see above
+11	see above
+12	see above
 ----------------------------------
 13	???
 ----------------------------------
-Bereich 3
+Zone 3
 ----------------------------------
-14	s.o.
+14	see above
 15	
-16	s.o.
-17	s.o.
-18	s.o.
+16	see above
+17	see above
+18	see above
 
 StatusID
 /network/<id-gw??>/device/<id-mower??>/service/<id-??>/value/<id-??>
