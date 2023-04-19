@@ -178,7 +178,9 @@ def sendMQTTData():
 if __name__ == "__main__":
     sendMQTTDataThread = Thread(target=sendMQTTData)
     sendMQTTDataThread.start()
-
+    eventSubscribeThread = Thread(target=gardenaEventSubscribeTask)
+    eventSubscribeThread.start()
+    
     while True:
         random = Random()
         publishQueue.put(EventData(random.randint(10,100), random.randint(50,200)))
