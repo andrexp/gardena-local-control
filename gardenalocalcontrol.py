@@ -9,6 +9,7 @@ from threading import Thread
 from queue import Queue
 from random import Random
 from pynng import Sub0
+import argparse
 
 from config import MQTT_BROKER_IP
 from config import MQTT_BROKER_PORT
@@ -178,6 +179,12 @@ def sendMQTTData():
 
 #-----------------Main program---------------------------
 if __name__ == "__main__":
+    cliArgParser = argparse.ArgumentParser()
+    cliArgParser.add_argument("--log")
+
+    cliArgs = cliArgParser.parse_args()
+    loglevel = cliArgs.log
+
     sendMQTTDataThread = Thread(target=sendMQTTData)
     sendMQTTDataThread.start()
     eventSubscribeThread = Thread(target=gardenaEventSubscribeTask)
