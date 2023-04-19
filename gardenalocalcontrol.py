@@ -32,7 +32,7 @@ def gardenaEventInterpreter(event_str):
 #    except:
 #        pass
 
-def gardenaEventSubscribeTask(name):
+def gardenaEventSubscribeTask():
     logging.debug("gardenaEventSubscribe Task is starting reading: ", name)
     with Sub0(dial=GARDENA_NNG_FORWARD_PATH) as sub0:
         sub0.subscribe("")
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     sendMQTTDataThread.start()
     eventSubscribeThread = Thread(target=gardenaEventSubscribeTask)
     eventSubscribeThread.start()
-    
+
     while True:
         random = Random()
         publishQueue.put(EventData(random.randint(10,100), random.randint(50,200)))
