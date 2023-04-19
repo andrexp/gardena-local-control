@@ -1,0 +1,24 @@
+#!/bin/sh
+
+if [ $(whoami) != 'root' ]; then
+	echo -e "\nSuper user right are needed $0"
+	exit 1;
+fi
+
+echo "Stopping service"
+systemctl stop GardenaLocalControl.service
+
+echo "Copy needed files"
+if [ ! -d "/???/gardenalocalcontrol/" ];then
+	mkdir /???/gardenalocalcontrol/
+	chown -R $USER /???/gardenalocalcontrol/
+	chmod -R 0755 /???/gardenalocalcontrol/
+fi
+
+cp gardenalocalcontrol.py /???/gardenalocalcontrol
+
+cp gardenalocalcontrol.service /etc/systemd/system
+chmod a+x /etc/systemd/system/gardenalocalcontrol.service
+echo "Restarting service"
+systemctl --system daemon-reload
+systemctl restart gardenalocalcontrol.service
