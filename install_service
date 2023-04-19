@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ $(whoami) != 'root' ]; then
+	echo -e "\nSuper user right are needed $0"
+	exit 1;
+fi
+
+echo "Install dependencies"
+pip3 install paho-mqtt
+pip install paho-mqtt
+echo "Copy needed files"
+if [ ! -d "/???/gardenalocalcontrol/" ];then
+	mkdir /???/gardenalocalcontrol/
+	chown -R $USER /???/gardenalocalcontrol/
+	chmod -R 0755 /???/gardenalocalcontrol/
+fi
+
+cp gardenalocalcontrol.py /???/gardenalocalcontrol
+
+cp gardenalocalcontrol.service /etc/systemd/system
+chmod a+x /etc/systemd/system/gardenalocalcontrol.service
+systemctl --system daemon-reload
+systemctl start gardenalocalcontrol.service
