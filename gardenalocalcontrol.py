@@ -33,7 +33,7 @@ def gardenaEventInterpreter(event_str):
 #        pass
 
 def gardenaEventSubscribeTask():
-    logging.debug("gardenaEventSubscribe Task is starting reading: ", name)
+    logging.debug("gardenaEventSubscribe Task is start reading")
     with Sub0(dial=GARDENA_NNG_FORWARD_PATH) as sub0:
         sub0.subscribe("")
         gardenaEventInterpreter(sub0.recv().decode('utf-8'))
