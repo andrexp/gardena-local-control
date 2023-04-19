@@ -35,11 +35,12 @@ def gardenaEventInterpreter(event_str):
 
 def gardenaEventSubscribeTask():
     logging.debug("gardenaEventSubscribe Task is start reading")
-    with Sub0(dial=GARDENA_NNG_FORWARD_PATH) as sub0:
-        sub0.subscribe("")
-        received_telegram = sub0.recv()
-        logging.debug("received telegram: %s", received_telegram)
-        gardenaEventInterpreter(received_telegram.decode('utf-8'))
+    while True:
+        with Sub0(dial=GARDENA_NNG_FORWARD_PATH) as sub0:
+            sub0.subscribe("")
+            received_telegram = sub0.recv()
+            logging.debug("received telegram: %s", received_telegram)
+            gardenaEventInterpreter(received_telegram.decode('utf-8'))
 
 #Class to store nng EventData
 class EventData:
