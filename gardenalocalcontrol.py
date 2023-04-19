@@ -184,6 +184,7 @@ if __name__ == "__main__":
 
     cliArgs = cliArgParser.parse_args()
     loglevel = cliArgs.log
+    logging.basicConfig(level=loglevel.upper())
 
     sendMQTTDataThread = Thread(target=sendMQTTData)
     sendMQTTDataThread.start()
