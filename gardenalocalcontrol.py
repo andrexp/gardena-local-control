@@ -30,6 +30,7 @@ def gardenaEventInterpreter(event_str):
 #    try:
         gardenaEventDict = json.loads(event_str)
         device = gardenaEventDict[0]["entity"]["device"]
+        logging.debug("got message from device: %s", device)
 #    except:
 #        pass
 
