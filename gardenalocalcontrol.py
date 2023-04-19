@@ -17,6 +17,7 @@ from config import MQTT_BROKER_USER
 from config import MQTT_BROKER_PASSWORD
 from config import MQTT_TOPIC_SUBSCRIBE
 from config import MQTT_TOPIC_PUBLISH
+from config import GARDENA_NNG_FORWARD_PATH
 from config import SCRIPT_VERSION
 
 
@@ -25,14 +26,15 @@ def gardenaCommandBuilder(command, device, meta):
     return gardenaCommand
 
 def gardenaEventInterpreter(event_str):
-    try:
+#    try:
         gardenaEventDict = json.loads(event_str)
-    except:
-        pass
+        device = gardenaEventDict[0]["entity"]["device"]
+#    except:
+#        pass
 
 def gardenaEventSubscribeTask(name):
     logging.debug("gardenaEventSubscribe Task is starting reading: ", name)
-    with Sub0(dial='ipc:///tmp/lemonbeatd-event.ipc') as sub0:
+    with Sub0(dial=GARDENA_NNG_FORWARD_PATH) as sub0:
         sub0.subscribe("")
         gardenaEventInterpreter(sub0.recv().decode('utf-8'))
 
