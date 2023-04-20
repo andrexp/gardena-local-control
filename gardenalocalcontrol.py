@@ -55,7 +55,7 @@ mqttClientDict = dict()
 
 def gardenaCommandBuilder(command):
     cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},"op":"write","payload":{{"{{{}}}":{{"ts":{},"vi":%d}}}}]'
-    print(cmd_str)
+    logging.debug(cmd_str)
     return gardenaCommand
 
 def gardenaEventInterpreter(event_str):
