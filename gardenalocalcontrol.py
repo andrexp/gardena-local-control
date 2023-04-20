@@ -60,11 +60,10 @@ def gardenaCommandBuilder(command):
         if command.command == "mower_timer":
             cmd_str += '"vi"'
         elif command.command == "action_paused_until_1":
-            cmd_str += '"vo"'
+            cmd_str += '"vo": "{}"}}}}}}]'.format(command.payload)
         else:
             # further commands have to be first observed, all commands which are not in list above will be ignored
             return False
-        cmd_str += ':{}}}}}}}]'.format(command.payload)
 
         logging.debug("Built command string: {}".format(bytes(cmd_str, encoding='utf-8')))
         return bytes(cmd_str, encoding='utf-8')
