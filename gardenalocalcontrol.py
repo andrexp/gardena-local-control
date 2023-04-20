@@ -83,31 +83,31 @@ def gardenaCommandBuilder(command):
 def gardenaEventInterpreter(event_str):
     ed = EventData("","","")
 
-    try:
-        # parse JSON
-        gardenaEventDict = json.loads(event_str)[0]
-        deviceId = gardenaEventDict["entity"]["device"]
-        subPath = gardenaEventDict["entity"]["path"]
-        sequence = gardenaEventDict["metadata"]["sequence"]
-        source = gardenaEventDict["metadata"]["source"]
-        operation = gardenaEventDict["op"]
-        payload = gardenaEventDict["payload"]
+#    try:
+    # parse JSON
+    gardenaEventDict = json.loads(event_str)[0]
+    deviceId = gardenaEventDict["entity"]["device"]
+    subPath = gardenaEventDict["entity"]["path"]
+    sequence = gardenaEventDict["metadata"]["sequence"]
+    source = gardenaEventDict["metadata"]["source"]
+    operation = gardenaEventDict["op"]
+    payload = gardenaEventDict["payload"]
 
-        logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}".format(deviceId, payload))
+    logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}".format(deviceId, payload))
 
-        # fill into object to publish via MQTT, sometimes payload has more than one dataset
-        ed.deviceid = deviceId
-        for data in payload.keys():
-            ed.eventtype = data
-            for key in payload[data].keys():
-                if key == "vi" or key == "vo":
-                    ed.eventvalue = payload[data][key]
+    # fill into object to publish via MQTT, sometimes payload has more than one dataset
+    ed.deviceid = deviceId
+    for data in payload.keys():
+        ed.eventtype = data
+        for key in payload[data].keys():
+            if key == "vi" or key == "vo":
+                ed.eventvalue = payload[data][key]
 
-    except Exception as e:
-        logging.debug("ERR Parsing JSON-Data: {}".format(e))
-        # if no valid interpetation is possible set type to unknown and value to raw event_str
-        ed.eventtype = "unknown"
-        ed.eventvalue = event_str
+#    except Exception as e:
+#        logging.debug("ERR Parsing JSON-Data: {}".format(e))
+#        # if no valid interpetation is possible set type to unknown and value to raw event_str
+#        ed.eventtype = "unknown"
+#        ed.eventvalue = event_str
 
     return ed
 
