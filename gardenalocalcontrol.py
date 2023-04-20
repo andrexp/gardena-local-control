@@ -39,9 +39,12 @@ def gardenaEventInterpreter(event_str):
         payload = gardenaEventDict[0]["payload"]
         payload_cmd = gardenaEventDict[0]["payload"][0]
     except:
+        # if no valid interpetation is possible set type to unknown and value to raw event_str
         ed.eventtype = "unknown"
         ed.eventvalue = event_str
 
+    # send to publish queue
+    publishQueue.put(ed)
     return ed
 
 def gardenaEventSubscribeTask():
@@ -197,7 +200,7 @@ if __name__ == "__main__":
 
     cliArgs = cliArgParser.parse_args()
     loglevel = cliArgs.log
-    
+
     try:
         logging.basicConfig(level=loglevel.upper())
     except:
