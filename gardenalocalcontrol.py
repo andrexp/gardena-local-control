@@ -98,9 +98,11 @@ def gardenaEventInterpreter(event_str):
         # fill into object to publish via MQTT, sometimes payload has more than one dataset
         ed.deviceid = deviceId
         for data in payload.keys():
+            logging.debug("Data found in payload: {}".format(data))
             ed.eventtype = data
             for key in payload[data].keys():
                 if key == "vi" or key == "vo":
+                    logging.debug("Value found in payload: {}".format(data))
                     ed.eventvalue = payload[data][key]
                     publishEventDataQueue.put(ed)
 
