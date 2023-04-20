@@ -93,7 +93,7 @@ def gardenaEventInterpreter(event_str):
         operation = gardenaEventDict["op"]
         payload = gardenaEventDict["payload"]
 
-        logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}".format(deviceId, payload, payload_action))
+        logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}".format(deviceId, payload))
 
         # fill into object to publish via MQTT, sometimes payload has more than one dataset
         ed.deviceid = deviceId
