@@ -49,10 +49,10 @@ def gardenaEventInterpreter(event_str):
         source = gardenaEventDict[0]["metadata"]["source"]
         operation = gardenaEventDict[0]["op"]
         payload = gardenaEventDict[0]["payload"]
-        payload_cmd = gardenaEventDict[0]["payload"].keys[0]
+        payload_cmd = gardenaEventDict[0]["payload"].keys()[0]
 
     except Exception as e:
-        logging.debug(e)
+        logging.debug("ERR: Parsing JSON-Data: {}",e)
         # if no valid interpetation is possible set type to unknown and value to raw event_str
         ed.eventtype = "unknown"
         ed.eventvalue = event_str
