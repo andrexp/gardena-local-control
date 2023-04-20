@@ -39,6 +39,7 @@ def gardenaCommandBuilder(command, device, meta):
     return gardenaCommand
 
 def gardenaEventInterpreter(event_str):
+    global publishQueue
     ed = EventData("","","")
 
     try:
@@ -53,7 +54,7 @@ def gardenaEventInterpreter(event_str):
         payload_action = list(payload.keys())[0]
 
         ed.eventtype = payload_action
-        
+
         for key in payload[payload_action].keys():
             if key == "vi" or key == "vo":
                 ed.eventvalue = payload[payload_action][key]
