@@ -59,12 +59,12 @@ def gardenaCommandBuilder(command):
         # build expected command string to be sent to command queue of the gardena gateway
         cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},'.format(command.deviceid)
         cmd_str += '"op":"{}"'.format(command.operation)
-        cmd_str += ',"payload":{{"{}":{{"ts":{},'.format(command.command, int(time.time()))
+        cmd_str += ',"payload":{{"{}":{{"ts":{}'.format(command.command, int(time.time()))
 
         if command.command == "mower_timer":
-            cmd_str += '"vi": {}}}}}}}]'.format(command.payload)
+            cmd_str += ',"vi": {}}}}}}}]'.format(command.payload)
         elif command.command == "action_paused_until_1":
-            cmd_str += '"vo": "{}"}}}}}}]'.format(command.payload)
+            cmd_str += ',"vo": "{}"}}}}}}]'.format(command.payload)
         elif command.command == "status":
             pass
             cmd_str += '}}}]'
