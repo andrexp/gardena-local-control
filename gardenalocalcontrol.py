@@ -86,7 +86,7 @@ def gardenaEventInterpreter(event_str):
 
     return ed
 
-def gardenaEventSubscribeTask():
+def gardenaEventSubscribe():
     logging.debug("gardenaEventSubscribe Task is start reading")
     while True:
         with Sub0(dial=GARDENA_NNG_FORWARD_PATH) as sub0:
@@ -295,6 +295,8 @@ if __name__ == "__main__":
     sendEventDataToMQTTThread.start()
     sendEventDataToMQTTThread = Thread(target=startSubscribeCommandDataFromMQTT)
     sendEventDataToMQTTThread.start()
+    gardenaEventSubscribeThread = Thread(target=gardenaEventSubscribe)
+    gardenaEventSubscribeThread.start()
 
     while True:
 
