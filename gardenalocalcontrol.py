@@ -21,6 +21,18 @@ from config import MQTT_TOPIC_PUBLISH
 from config import GARDENA_NNG_FORWARD_PATH
 from config import SCRIPT_VERSION
 
+#Class to store nng EventData
+class EventData:
+    def __init__(self, deviceid, eventtype, eventvalue):
+        self.deviceid = deviceid
+        self.eventtype = eventtype
+        self.eventvalue = eventvalue
+
+
+
+
+#Queue for publish events
+publishQueue = Queue()
 
 def gardenaCommandBuilder(command, device, meta):
     gardenaCommand = ""
@@ -55,19 +67,6 @@ def gardenaEventSubscribeTask():
             received_telegram = sub0.recv()
             logging.debug("received telegram: %s", received_telegram)
             gardenaEventInterpreter(received_telegram.decode('utf-8'))
-
-#Class to store nng EventData
-class EventData:
-    def __init__(self, deviceid, eventtype, eventvalue):
-        self.deviceid = deviceid
-        self.eventtype = eventtype
-        self.eventvalue = eventvalue
-
-
-
-
-#Queue for publish events
-publishQueue = Queue()
 
 #Connect callback for MQTT clients
 def connectCallback(client, userdata, flags, rc):
