@@ -106,9 +106,9 @@ def gardenaCommandPublish():
             continue
         # if there is at least one element try to publish to gardena gateway
         logging.debug("received telegram to publish to gardena gateway")
-        cmd_object = publishEventDataQueue.get()
         with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
-            req.send(gardenaCommandBuilder(cmd_object.command))
+#            req.send(gardenaCommandBuilder(publishEventDataQueue.get()))
+            gardenaCommandBuilder(publishEventDataQueue.get())
             print(req.recv())
 
 
