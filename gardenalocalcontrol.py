@@ -220,5 +220,5 @@ if __name__ == "__main__":
     eventSubscribeThread.start()
 
     while True:
-
+        publishQueue.put("test","test","test")
         time.sleep(10)
