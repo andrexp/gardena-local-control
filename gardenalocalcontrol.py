@@ -212,9 +212,5 @@ if __name__ == "__main__":
     eventSubscribeThread.start()
 
     while True:
-        random = Random()
-        publishQueue.put(EventData(random.randint(10,100), random.randint(50,200)))
-        publishQueue.put(EventData(random.randint(10,100), random.randint(50,200)))
-        publishQueue.put(EventData(random.randint(10,100), random.randint(50,200)))
 
         time.sleep(10)
