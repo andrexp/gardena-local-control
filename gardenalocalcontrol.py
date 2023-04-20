@@ -57,7 +57,7 @@ def gardenaCommandBuilder(command):
     try:
         cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},"op":"write","payload":{{"{}":{{"ts":{},"vi":{}}}}}]'.format(command.deviceid, command.command, int(time.time()), command.payload)
         logging.debug("Built command string: {}".format(cmd_str))
-        return cmd_str
+        return bytes(cmd_str, encoding='utf-8')
     except Exception as e:
         logging.debug("ERR Building gardena command: {}".format(e))
         return False
