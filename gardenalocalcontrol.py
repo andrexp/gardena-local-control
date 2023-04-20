@@ -56,17 +56,24 @@ mqttClientDict = dict()
 def gardenaCommandBuilder(command):
     try:
         # build expected command string to be sent to command queue of the gardena gateway
-        cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},"op":"write","payload":{{"{}":{{"ts":{},'.format(command.deviceid, command.command, int(time.time()))
+        cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},'.format(command.deviceid)
+        cmd_str += '"op":"{}"'.format(command.operation)
+        cmd_str += ',"payload":{{"{}":{{"ts":{},'.format(command.command, int(time.time()))
+
         if command.command == "mower_timer":
-            cmd_str += '"vi"'
+            cmd_str += '"vi": {}}}}}}}]'.format(command.payload)
         elif command.command == "action_paused_until_1":
             cmd_str += '"vo": "{}"}}}}}}]'.format(command.payload)
+        elif command.command == "status":
+            pass
+            cmd_str += '}}}]'
         else:
             # further commands have to be first observed, all commands which are not in list above will be ignored
             return False
-
         logging.debug("Built command string: {}".format(bytes(cmd_str, encoding='utf-8')))
-        return bytes(cmd_str, encoding='utf-8')
+        # return resulting command string byte-coded
+        return bytes(cmd_str, encoding='utf-8')   
+    
     except Exception as e:
         logging.debug("ERR Building gardena command: {}".format(e))
         # returning false leads to ignoring received command

@@ -10,5 +10,5 @@ MQTT_TOPIC_SUBSCRIBE = MQTT_TOPIC_BASE.format("#") 		                # Subscribe
 MQTT_TOPIC_PUBLISH = MQTT_TOPIC_BASE                                    # Command Topic
 MQTT_PUBLISH_RETAIN = False                                             # Publish Command as retain
 GARDENA_NNG_FORWARD_PATH_EVT = "ipc:///tmp/lemonbeatd-event.ipc"        # nngforward path from Gardena Smart Gateway to receive events
-GARDENA_NNG_FORWARD_PATH_CMD = "ipc:///tmp/lemonbeatd-command.ipc"        # nngforward path from Gardena Smart Gateway to publish commands
+GARDENA_NNG_FORWARD_PATH_CMD = "ipc:///tmp/lemonbeatd-command.ipc"      # nngforward path from Gardena Smart Gateway to publish commands
 SCRIPT_VERSION = '1.0.0.0'					                            # Version of GardenaLocalControl script
