@@ -66,8 +66,6 @@ def gardenaEventInterpreter(event_str):
         ed.eventtype = "unknown"
         ed.eventvalue = event_str
 
-    # send to publish queue
-    publishQueue.put(ed)
     return ed
 
 def gardenaEventSubscribeTask():
@@ -77,7 +75,7 @@ def gardenaEventSubscribeTask():
             sub0.subscribe("")
             received_telegram = sub0.recv()
             logging.debug("received telegram from nngforward")
-            gardenaEventInterpreter(received_telegram.decode('utf-8'))
+            publishQueue.put(gardenaEventInterpreter(received_telegram.decode('utf-8')))
 
 #Connect callback for MQTT clients
 def connectCallback(client, userdata, flags, rc):
