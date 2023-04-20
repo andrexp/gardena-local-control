@@ -197,7 +197,11 @@ if __name__ == "__main__":
 
     cliArgs = cliArgParser.parse_args()
     loglevel = cliArgs.log
-    logging.basicConfig(level=loglevel.upper())
+    
+    try:
+        logging.basicConfig(level=loglevel.upper())
+    except:
+        logging.basicConfig(level="INFO")
 
     sendMQTTDataThread = Thread(target=sendMQTTData)
     sendMQTTDataThread.start()
