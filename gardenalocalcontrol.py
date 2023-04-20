@@ -92,17 +92,16 @@ def gardenaEventInterpreter(event_str):
         source = gardenaEventDict["metadata"]["source"]
         operation = gardenaEventDict["op"]
         payload = gardenaEventDict["payload"]
-        payload_action = list(payload.keys())[0]
 
-        logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}, payload_action: {}".format(deviceId, payload, payload_action))
+        logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}".format(deviceId, payload, payload_action))
 
-        # fill into object to publish via MQTT
+        # fill into object to publish via MQTT, sometimes payload has more than one dataset
         ed.deviceid = deviceId
-        ed.eventtype = payload_action
-
-        for key in payload[payload_action].keys():
-            if key == "vi" or key == "vo":
-                ed.eventvalue = payload[payload_action][key]
+        for data in payload.keys():
+            ed.eventtype = data
+            for key in payload[data].keys():
+                if key == "vi" or key == "vo":
+                    ed.eventvalue = payload[data][key]
 
     except Exception as e:
         logging.debug("ERR Parsing JSON-Data: {}".format(e))
