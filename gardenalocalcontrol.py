@@ -37,8 +37,8 @@ class CommandData:
     def __init__(self, deviceid, command, payload):
         self.deviceid = deviceid
         self.command = command
-        self.payload = payload    
-
+        self.payload = payload
+        
 #Class to store all data to communicate with mqtt
 class MQTTClientData:
     def __init__(self, connectionReturnCode, disconnectionReturnCode):
@@ -55,13 +55,26 @@ mqttClientDict = dict()
 
 def gardenaCommandBuilder(command):
     try:
-        cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},"op":"write","payload":{{"{}":{{"ts":{},"vi":{}}}}}}}]'.format(command.deviceid, command.command, int(time.time()), command.payload)
+        # build expected command string to be sent to command queue of the gardena gateway
+        cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},"op":"write","payload":{{"{}":{{"ts":{},'.format(command.deviceid, command.command, int(time.time()))
+        if command.command == "mower_timer":
+            cmd_str += '"vi"'
+        elif command.command == "action_paused_until_1":
+            cmd_str += '"vo"'
+        else:
+            # further commands have to be first observed, all commands which are not in list above will be ignored
+            return False
+        cmd_str += ':{}}}}}}}]'.format(command.payload)
+
         logging.debug("Built command string: {}".format(bytes(cmd_str, encoding='utf-8')))
         return bytes(cmd_str, encoding='utf-8')
     except Exception as e:
         logging.debug("ERR Building gardena command: {}".format(e))
+        # returning false leads to ignoring received command
         return False
-#    return gardenaCommand
+    
+    # this point should not be reached
+    return False
 
 def gardenaEventInterpreter(event_str):
     ed = EventData("","","")
