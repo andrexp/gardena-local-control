@@ -49,7 +49,7 @@ def gardenaEventInterpreter(event_str):
         source = gardenaEventDict[0]["metadata"]["source"]
         operation = gardenaEventDict[0]["op"]
         payload = gardenaEventDict[0]["payload"]
-        payload_action = payload.keys().first()
+        payload_action = payload.keys()[0]
 
         logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}, payload_action: {}".format(deviceId, payload, payload_action))
 
