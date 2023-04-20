@@ -27,12 +27,22 @@ def gardenaCommandBuilder(command, device, meta):
     return gardenaCommand
 
 def gardenaEventInterpreter(event_str):
-#    try:
+    ed = EventData("","","")
+
+    try:
         gardenaEventDict = json.loads(event_str)
-        device = gardenaEventDict[0]["entity"]["device"]
-        logging.debug("got message from device: %s", device)
-#    except:
-#        pass
+        deviceId = gardenaEventDict[0]["entity"]["device"]
+        subPath = gardenaEventDict[0]["entity"]["path"]
+        sequence = gardenaEventDict[0]["metadata"]["sequence"]
+        source = gardenaEventDict[0]["metadata"]["source"]
+        operation = gardenaEventDict[0]["op"]
+        payload = gardenaEventDict[0]["payload"]
+        payload_cmd = gardenaEventDict[0]["payload"][0]
+    except:
+        ed.eventtype = "unknown"
+        ed.eventvalue = event_str
+
+    return ed
 
 def gardenaEventSubscribeTask():
     logging.debug("gardenaEventSubscribe Task is start reading")
@@ -45,7 +55,8 @@ def gardenaEventSubscribeTask():
 
 #Class to store nng EventData
 class EventData:
-    def __init__(self,eventtype, eventvalue):
+    def __init__(self, deviceid, eventtype, eventvalue):
+        self.deviceid = deviceid
         self.eventtype = eventtype
         self.eventvalue = eventvalue
 
