@@ -193,9 +193,9 @@ def sendMQTTData():
                     publishMQTTData(client, MQTT_TOPIC_PUBLISH, item.eventtype, item.eventvalue)
                 #Verbindung zum MQTT Broker trennen
                 disconnectMQTTBrokerAndWait(client)
-        except:
+        except Exception as e:
             client.disconnect()
-            print("MQTT Exception")
+            print("ERR MQTT Exception: {}".format(e))
         finally:
             client.loop_stop()
         #TODO Thread abgeben?
