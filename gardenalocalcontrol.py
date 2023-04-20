@@ -61,13 +61,10 @@ def gardenaCommandBuilder(command):
         cmd_str += '"op":"{}"'.format(command.operation)
         cmd_str += ',"payload":{{"{}":{{"ts":{}'.format(command.command, int(time.time()))
 
-        if command.command == "mower_timer":
+        if command.command == "mower_timer" or command.command == "status":
             cmd_str += ',"vi": {}}}}}}}]'.format(command.payload)
         elif command.command == "action_paused_until_1":
             cmd_str += ',"vo": "{}"}}}}}}]'.format(command.payload)
-        elif command.command == "battery_level":
-            pass
-            cmd_str += '}}}]'
         else:
             # further commands have to be first observed, all commands which are not in list above will be ignored
             return False
