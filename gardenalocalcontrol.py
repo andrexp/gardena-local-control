@@ -54,9 +54,9 @@ subscribeCommandDataQueue = Queue()
 mqttClientDict = dict()
 
 def gardenaCommandBuilder(command):
-    cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},"op":"write","payload":{{"{{{}}}":{{"ts":{},"vi":%d}}}}]'
-    logging.debug(cmd_str)
-    return gardenaCommand
+    cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},"op":"write","payload":{{"{{{}}}":{{"ts":{},"vi":{}}}}}]'.format(command.deviceid, command.command, time.time(), command.payload)
+    logging.debug("Built command string: %s",cmd_str)
+#    return gardenaCommand
 
 def gardenaEventInterpreter(event_str):
     ed = EventData("","","")
