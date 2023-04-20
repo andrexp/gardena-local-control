@@ -42,14 +42,21 @@ def gardenaEventInterpreter(event_str):
     ed = EventData("","","")
 
     try:
-        gardenaEventDict = json.loads(event_str)
-        deviceId = gardenaEventDict[0]["entity"]["device"]
-        subPath = gardenaEventDict[0]["entity"]["path"]
-        sequence = gardenaEventDict[0]["metadata"]["sequence"]
-        source = gardenaEventDict[0]["metadata"]["source"]
-        operation = gardenaEventDict[0]["op"]
-        payload = gardenaEventDict[0]["payload"]
+        # parse JSON
+        gardenaEventDict = json.loads(event_str)[0]
+        deviceId = gardenaEventDict["entity"]["device"]
+        subPath = gardenaEventDict["entity"]["path"]
+        sequence = gardenaEventDict["metadata"]["sequence"]
+        source = gardenaEventDict["metadata"]["source"]
+        operation = gardenaEventDict["op"]
+        payload = gardenaEventDict["payload"]
         payload_action = list(payload.keys())[0]
+
+        ed.eventtype = payload_action
+        
+        for key in payload[payload_action].keys():
+            if key == "vi" or key == "vo":
+                ed.eventvalue = payload[payload_action][key]
 
         logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}, payload_action: {}".format(deviceId, payload, payload_action))
 
