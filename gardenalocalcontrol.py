@@ -149,7 +149,7 @@ def connectSubscribeCommandDataCallback(client, userdata, flags, rc):
 
 #callback with received command data
 def subscribeCommandDataCallback(client, userdata, msg):
-    cd = CommandData()
+    cd = CommandData("","","")
     try:
         logging.debug(msg.topic + ": " + str(msg.payload))
         json_command = json.loads(msg.payload)
