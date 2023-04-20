@@ -65,7 +65,7 @@ def gardenaCommandBuilder(command):
             cmd_str += ',"vi": {}}}}}}}]'.format(command.payload)
         elif command.command == "action_paused_until_1":
             cmd_str += ',"vo": "{}"}}}}}}]'.format(command.payload)
-        elif command.command == "status":
+        elif command.command == "battery_level":
             pass
             cmd_str += '}}}]'
         else:
