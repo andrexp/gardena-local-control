@@ -81,7 +81,7 @@ def gardenaCommandBuilder(command):
     return False
 
 def gardenaEventInterpreter(event_str):
-    ed = EventData("","","")
+
 
     try:
         # parse JSON
@@ -96,15 +96,10 @@ def gardenaEventInterpreter(event_str):
         logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}".format(deviceId, payload))
 
         # fill into object to publish via MQTT, sometimes payload has more than one dataset
-        ed.deviceid = deviceId
         for data in payload.keys():
-            logging.debug("Data found in payload: {}".format(data))
-            ed.eventtype = data
             for key in payload[data].keys():
                 if key == "vi" or key == "vo":
-                    logging.debug("Value found in payload: {}".format(payload[data][key]))
-                    ed.eventvalue = payload[data][key]
-                    publishEventDataQueue.put(ed)
+                    publishEventDataQueue.put(EventData(deviceId,data,payload[data][key]))
 
     except Exception as e:
         logging.debug("ERR Parsing JSON-Data: {}".format(e))
