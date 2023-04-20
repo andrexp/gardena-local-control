@@ -55,9 +55,7 @@ mqttClientDict = dict()
 
 def gardenaCommandBuilder(command):
     try:
-        # [{"entity":{"device":"{}","path":"lemonbeat/0"},"metadata":{"sequence":1,"source":"lemonbeatd"},"op":"write","payload":{"{{{}}}":{"ts":{},"vi":{}}}]
-        # cmd_str = 'device_id: {}, command: {}, time_stamp: {}, payload: {}'.format(command.deviceid, command.command, time.time(), command.payload)
-        cmd_str = "NO STRING BUILT"
+        cmd_str = '[{"entity":{"device":"{}","path":"lemonbeat/0"},"metadata":{"sequence":1,"source":"lemonbeatd"},"op":"write","payload":{"{{{}}}":{"ts":{},"vi":{}}}]'.format(command.deviceid, command.command, time.time(), command.payload)
         logging.debug("Built command string: {}".format(cmd_str))
     except Exception as e:
         logging.debug("ERR Building gardena command: {}".format(e))
@@ -111,7 +109,7 @@ def gardenaCommandPublish():
             continue
         # if there is at least one element try to publish to gardena gateway
         logging.debug("received telegram to publish to gardena gateway")
-        gardenaCommandBuilder(publishEventDataQueue.get())
+        gardenaCommandBuilder(subscribeCommandDataQueue.get())
 #        with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
 #            req.send(gardenaCommandBuilder(publishEventDataQueue.get()))
 #            gardenaCommandBuilder(publishEventDataQueue.get())
