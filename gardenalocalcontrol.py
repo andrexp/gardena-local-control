@@ -8,7 +8,7 @@ import json
 from threading import Thread
 from queue import Queue
 from random import Random
-from pynng import Sub0
+from pynng import Sub0, Req0
 import argparse
 
 from config import MQTT_BROKER_IP
@@ -20,7 +20,8 @@ from config import MQTT_CLIENT_ID_BASE
 from config import MQTT_TOPIC_SUBSCRIBE
 from config import MQTT_TOPIC_PUBLISH
 from config import MQTT_PUBLISH_RETAIN
-from config import GARDENA_NNG_FORWARD_PATH
+from config import GARDENA_NNG_FORWARD_PATH_EVT
+from config import GARDENA_NNG_FORWARD_PATH_CMD
 from config import MQTT_PUBLISH_RETAIN
 from config import SCRIPT_VERSION
 
@@ -53,7 +54,8 @@ subscribeCommandDataQueue = Queue()
 mqttClientDict = dict()
 
 def gardenaCommandBuilder(command):
-    gardenaCommand = ""
+    cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},"op":"write","payload":{{"{{{}}}":{{"ts":{},"vi":%d}}}}]'
+    print(cmd_str)
     return gardenaCommand
 
 def gardenaEventInterpreter(event_str):
@@ -91,11 +93,25 @@ def gardenaEventInterpreter(event_str):
 def gardenaEventSubscribe():
     logging.debug("gardenaEventSubscribe Task is start reading")
     while True:
-        with Sub0(dial=GARDENA_NNG_FORWARD_PATH) as sub0:
+        with Sub0(dial=GARDENA_NNG_FORWARD_PATH_EVT) as sub0:
             sub0.subscribe("")
             received_telegram = sub0.recv()
             logging.debug("received telegram from nngforward")
             publishEventDataQueue.put(gardenaEventInterpreter(received_telegram.decode('utf-8')))
+
+def gardenaCommandPublish():
+    while True:
+        # there must be a message in the queue
+        if subscribeCommandDataQueue.empty():
+            continue
+        # if there is at least one element try to publish to gardena gateway
+        logging.debug("received telegram to publish to gardena gateway")
+        cmd_object = publishEventDataQueue.get()
+        with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
+            #b'[{"entity":{"device":"3035C33A881CFF8000002128","path":"lemonbeat/0"},"metadata":{"sequence":138,"source":"lemonbeatd"},"op":"read","payload":{"battery_level":{"ts":1681887703,"vi":40}}}]'
+            req.send(gardenaCommandBuilder(cmd_object.command))
+            print(req.recv())
+
 
 #Connect callback for MQTT clients
 def connectCallback(client, userdata, flags, rc):
@@ -299,6 +315,8 @@ if __name__ == "__main__":
     sendEventDataToMQTTThread.start()
     gardenaEventSubscribeThread = Thread(target=gardenaEventSubscribe)
     gardenaEventSubscribeThread.start()
+    gardenaCommandPublishThread = Thread(target=gardenaCommandPublish)
+    gardenaCommandPublishThread.start()
 
     while True:
 
