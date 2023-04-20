@@ -34,8 +34,9 @@ class EventData:
 
 #Class to store nng commandData
 class CommandData:
-    def __init__(self, deviceid, command, payload):
+    def __init__(self, deviceid, operation, command, payload):
         self.deviceid = deviceid
+        self.operation = operation
         self.command = command
         self.payload = payload
         
@@ -178,8 +179,9 @@ def subscribeCommandDataCallback(client, userdata, msg):
     try:
         logging.debug(msg.topic + ": " + str(msg.payload))
         json_command = json.loads(msg.payload)
-        cd.command = json_command["command"]
         cd.deviceid = json_command["deviceid"]
+        cd.operation = json_command["op"]
+        cd.command = json_command["command"]
         cd.payload = json_command["payload"]
         subscribeCommandDataQueue.put(cd)
     except Exception as e:
