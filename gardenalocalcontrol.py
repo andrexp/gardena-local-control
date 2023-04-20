@@ -49,12 +49,12 @@ def gardenaEventInterpreter(event_str):
         source = gardenaEventDict[0]["metadata"]["source"]
         operation = gardenaEventDict[0]["op"]
         payload = gardenaEventDict[0]["payload"]
-        payload_action = json.loads(payload).keys()[0]
+        payload_action = payload.keys().first()
 
         logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}, payload_action: {}".format(deviceId, payload, payload_action))
 
     except Exception as e:
-        logging.debug("ERR: Parsing JSON-Data: {}".format(e))
+        logging.debug("ERR Parsing JSON-Data: {}".format(e))
         # if no valid interpetation is possible set type to unknown and value to raw event_str
         ed.eventtype = "unknown"
         ed.eventvalue = event_str
