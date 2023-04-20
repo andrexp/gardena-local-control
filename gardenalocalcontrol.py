@@ -102,7 +102,7 @@ def gardenaEventInterpreter(event_str):
             ed.eventtype = data
             for key in payload[data].keys():
                 if key == "vi" or key == "vo":
-                    logging.debug("Value found in payload: {}".format(data))
+                    logging.debug("Value found in payload: {}".format(payload[data][key]))
                     ed.eventvalue = payload[data][key]
                     publishEventDataQueue.put(ed)
 
