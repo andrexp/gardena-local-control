@@ -109,10 +109,11 @@ def gardenaCommandPublish():
             continue
         # if there is at least one element try to publish to gardena gateway
         logging.debug("received telegram to publish to gardena gateway")
-        with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
+        logging.debug(gardenaCommandBuilder(publishEventDataQueue.get()))
+#        with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
 #            req.send(gardenaCommandBuilder(publishEventDataQueue.get()))
-            gardenaCommandBuilder(publishEventDataQueue.get())
-            print(req.recv())
+#            gardenaCommandBuilder(publishEventDataQueue.get())
+#            print(req.recv())
 
 
 #Connect callback for MQTT clients
