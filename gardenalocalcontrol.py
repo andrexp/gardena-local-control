@@ -108,7 +108,6 @@ def gardenaCommandPublish():
         logging.debug("received telegram to publish to gardena gateway")
         cmd_object = publishEventDataQueue.get()
         with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
-            #b'[{"entity":{"device":"3035C33A881CFF8000002128","path":"lemonbeat/0"},"metadata":{"sequence":138,"source":"lemonbeatd"},"op":"read","payload":{"battery_level":{"ts":1681887703,"vi":40}}}]'
             req.send(gardenaCommandBuilder(cmd_object.command))
             print(req.recv())
 
@@ -150,8 +149,16 @@ def connectSubscribeCommandDataCallback(client, userdata, flags, rc):
 
 #callback with received command data
 def subscribeCommandDataCallback(client, userdata, msg):
-    #TODO parse received messages to CommandData
-    logging.debug(msg.topic + ": " + str(msg.payload))
+    cd = CommandData()
+    try:
+        logging.debug(msg.topic + ": " + str(msg.payload))
+        json_command = json.loads(msg.payload)
+        cd.command = json_command["command"]
+        cd.deviceid = json_command["deviceId"]
+        cd.payload = json_command["payload"]
+        subscribeCommandDataQueue.put(cd)
+    except Exception as e:
+        logging.debug("ERR MQTT Exception (subscribe command): {}".format(e))
 #def def subscribeCommandDataCallback(client, userdata, msg):
 
 #method to establish a connection to the given broker address and to wait
@@ -273,7 +280,7 @@ def publishEventDataToMQTT():
                 disconnectMQTTBrokerAndWait(client)
         except Exception as e:
             client.disconnect()
-            logging.debug("ERR MQTT Exception: {}".format(e))
+            logging.debug("ERR MQTT Exception (publish event): {}".format(e))
         finally:
             client.loop_stop()
             if(mqttClientDict.get(client) != None):
