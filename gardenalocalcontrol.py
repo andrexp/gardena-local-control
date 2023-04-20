@@ -19,51 +19,30 @@ from config import MQTT_BROKER_PASSWORD
 from config import MQTT_CLIENT_ID_BASE
 from config import MQTT_TOPIC_SUBSCRIBE
 from config import MQTT_TOPIC_PUBLISH
+from config import MQTT_PUBLISH_RETAIN
 from config import GARDENA_NNG_FORWARD_PATH
 from config import MQTT_PUBLISH_RETAIN
 from config import SCRIPT_VERSION
 
-
-def gardenaCommandBuilder(command, device, meta):
-    gardenaCommand = ""
-    return gardenaCommand
-
-def gardenaEventInterpreter(event_str):
-#    try:
-        gardenaEventDict = json.loads(event_str)
-        device = gardenaEventDict[0]["entity"]["device"]
-        logging.debug("got message from device: %s", device)
-#    except:
-#        pass
-
-def gardenaEventSubscribeTask():
-    logging.debug("gardenaEventSubscribe Task is start reading")
-    while True:
-        with Sub0(dial=GARDENA_NNG_FORWARD_PATH) as sub0:
-            sub0.subscribe("")
-            received_telegram = sub0.recv()
-            logging.debug("received telegram: %s", received_telegram)
-            gardenaEventInterpreter(received_telegram.decode('utf-8'))
-
 #Class to store nng EventData
 class EventData:
-    def __init__(self, deviceAddress, eventtype, eventvalue):
-        self.deviceAddress = deviceAddress
+    def __init__(self, deviceid, eventtype, eventvalue):
+        self.deviceid = deviceid
         self.eventtype = eventtype
         self.eventvalue = eventvalue
 
 #Class to store nng commandData
 class CommandData:
-    def __init__(self, deviceAddress, eventtype, eventvalue):
-        self.deviceAddress = deviceAddress
-        self.eventtype = eventtype
-        self.eventvalue = eventvalue    
+    def __init__(self, deviceid, command, payload):
+        self.deviceid = deviceid
+        self.command = command
+        self.payload = payload    
 
 #Class to store all data to communicate with mqtt
 class MQTTClientData:
-        def __init__(self, connectionReturnCode, disconnectionReturnCode):
-            self.connectionReturnCode = connectionReturnCode
-            self.disconnectionReturnCode = disconnectionReturnCode
+    def __init__(self, connectionReturnCode, disconnectionReturnCode):
+        self.connectionReturnCode = connectionReturnCode
+        self.disconnectionReturnCode = disconnectionReturnCode
 
 
 #Queue for publish events
@@ -72,6 +51,49 @@ publishEventDataQueue = Queue()
 subscribeCommandDataQueue = Queue()
 #List for all mqtt clients
 mqttClientDict = dict()
+
+def gardenaCommandBuilder(command):
+    gardenaCommand = ""
+    return gardenaCommand
+
+def gardenaEventInterpreter(event_str):
+    ed = EventData("","","")
+
+    try:
+        # parse JSON
+        gardenaEventDict = json.loads(event_str)[0]
+        deviceId = gardenaEventDict["entity"]["device"]
+        subPath = gardenaEventDict["entity"]["path"]
+        sequence = gardenaEventDict["metadata"]["sequence"]
+        source = gardenaEventDict["metadata"]["source"]
+        operation = gardenaEventDict["op"]
+        payload = gardenaEventDict["payload"]
+        payload_action = list(payload.keys())[0]
+
+        ed.eventtype = payload_action
+
+        for key in payload[payload_action].keys():
+            if key == "vi" or key == "vo":
+                ed.eventvalue = payload[payload_action][key]
+
+        logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}, payload_action: {}".format(deviceId, payload, payload_action))
+
+    except Exception as e:
+        logging.debug("ERR Parsing JSON-Data: {}".format(e))
+        # if no valid interpetation is possible set type to unknown and value to raw event_str
+        ed.eventtype = "unknown"
+        ed.eventvalue = event_str
+
+    return ed
+
+def gardenaEventSubscribeTask():
+    logging.debug("gardenaEventSubscribe Task is start reading")
+    while True:
+        with Sub0(dial=GARDENA_NNG_FORWARD_PATH) as sub0:
+            sub0.subscribe("")
+            received_telegram = sub0.recv()
+            logging.debug("received telegram from nngforward")
+            publishEventDataQueue.put(gardenaEventInterpreter(received_telegram.decode('utf-8')))
 
 #Connect callback for MQTT clients
 def connectCallback(client, userdata, flags, rc):
@@ -191,7 +213,7 @@ def publishMQTTData(client, clientName, eventData):
     #Execute only if the connection has not been disconnected and a connection exists
     if mqttClientData.disconnectionReturnCode == -1 and mqttClientData.connectionReturnCode == 0:
         #Publish message
-        returnValue = client.publish(clientName.format(eventData.deviceAddress) + "/" + str(eventData.eventtype), str(eventData.eventvalue), qos=0, retain=MQTT_PUBLISH_RETAIN)
+        returnValue = client.publish(clientName.format(eventData.deviceid) + "/" + str(eventData.eventtype), str(eventData.eventvalue), qos=0, retain=MQTT_PUBLISH_RETAIN)
         logging.debug("MQTT Wait for publish")
         #Wait until the message has been published or the connection has been disconnected
         while not returnValue.is_published and mqttClientData.disconnectionReturnCode == -1:
@@ -233,7 +255,7 @@ def publishEventDataToMQTT():
                 disconnectMQTTBrokerAndWait(client)
         except Exception as e:
             client.disconnect()
-            logging.exception(e)
+            logging.debug("ERR MQTT Exception: {}".format(e))
         finally:
             client.loop_stop()
             if(mqttClientDict.get(client) != None):
@@ -263,7 +285,11 @@ if __name__ == "__main__":
 
     cliArgs = cliArgParser.parse_args()
     loglevel = cliArgs.log
-    logging.basicConfig(level=loglevel)
+
+    try:
+        logging.basicConfig(level=loglevel.upper())
+    except:
+        logging.basicConfig(level="INFO")
 
     sendEventDataToMQTTThread = Thread(target=publishEventDataToMQTT)
     sendEventDataToMQTTThread.start()
@@ -271,9 +297,5 @@ if __name__ == "__main__":
     sendEventDataToMQTTThread.start()
 
     while True:
-        random = Random()
-        publishEventDataQueue.put(EventData("Device{0}".format(random.randint(20,50)), random.randint(10,100), random.randint(50,200)))
-        publishEventDataQueue.put(EventData("Device{0}".format(random.randint(20,50)),random.randint(10,100), random.randint(50,200)))
-        publishEventDataQueue.put(EventData("Device{0}".format(random.randint(20,50)),random.randint(10,100), random.randint(50,200)))
 
         time.sleep(10)
