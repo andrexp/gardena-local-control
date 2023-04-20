@@ -102,14 +102,14 @@ def gardenaEventInterpreter(event_str):
             for key in payload[data].keys():
                 if key == "vi" or key == "vo":
                     ed.eventvalue = payload[data][key]
+                    publishEventDataQueue.put(ed)
 
     except Exception as e:
         logging.debug("ERR Parsing JSON-Data: {}".format(e))
         # if no valid interpetation is possible set type to unknown and value to raw event_str
         ed.eventtype = "unknown"
         ed.eventvalue = event_str
-
-    return ed
+        publishEventDataQueue.put(ed)
 
 def gardenaEventSubscribe():
     logging.debug("gardenaEventSubscribe Task is start reading")
@@ -118,7 +118,7 @@ def gardenaEventSubscribe():
             sub0.subscribe("")
             received_telegram = sub0.recv()
             logging.debug("received telegram from nngforward")
-            publishEventDataQueue.put(gardenaEventInterpreter(received_telegram.decode('utf-8')))
+            gardenaEventInterpreter(received_telegram.decode('utf-8'))
 
 def gardenaCommandPublish():
     while True:
