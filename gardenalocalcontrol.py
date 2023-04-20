@@ -18,6 +18,7 @@ from config import MQTT_BROKER_USER
 from config import MQTT_BROKER_PASSWORD
 from config import MQTT_TOPIC_SUBSCRIBE
 from config import MQTT_TOPIC_PUBLISH
+from config import MQTT_PUBLISH_RETAIN
 from config import GARDENA_NNG_FORWARD_PATH
 from config import SCRIPT_VERSION
 
