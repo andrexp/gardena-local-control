@@ -8,6 +8,9 @@ First, the explained method including installing the script or parts of software
 
 This small script is for simple communication between the Gardena Smart Gateway and a MQTT broker of your desire - **without any need of cloud infrastructure**. It has been tested with the Gardena Smart Gateway (Art. No. 190005). Required prequisions are rooting the Gateway and enabling the nngforward-service (see FAQ below)
 
+## Installation
+TBD
+
 ## Status messages to receive via GardenaLocalControl
 The script subscribes to the interprocess communication of lemonbeatd (rf-component which does communication with the wireless devices as the Gardena Smart Sileno mowers) and the Gardena cloud/shadoway connector. If a message is received, the script tries to interpet any component of it. Because not all of the information to be gathered is known at this point all information are pushed to the MQTT broker as it is. Therefore the following format and topics are used:
 
@@ -86,10 +89,9 @@ Example:
         "command": cyclic_status_req_enable     # enables cyclic status requests
         "payload": 60                           # set time to 60 sec
     }
+## FAQ
 
-# FAQ
-
-## How do I root my Gardena Smart Gateway and prepare it for using the script
+### How do I root my Gardena Smart Gateway and prepare it for using the script
 BE AWARE YOU WILL LOSING WARRANTY! ANY MODIFICATIONS WILL BE DONE AT YOUR OWN RISK!
 
 1.  Connect to the UART of the Board. You will find the Pins and required settings in the official [Gardena documentation](https://github.com/husqvarnagroup/smart-garden-gateway-public), you will need a USB to UART-Adapter or a RaspberryPi to be able to connect your computer.
@@ -112,10 +114,10 @@ BE AWARE YOU WILL LOSING WARRANTY! ANY MODIFICATIONS WILL BE DONE AT YOUR OWN RI
 
 9.  Have fun!
 
-## Where can I find the device_id
+### Where can I find the device_id
 The simplest way to obatin your desired device_id is to observe the output of the GardenaLocalControl when controlling e.g. a mower or any other device through the App.
 
-# Thanks to the Gardena devs for the hints and the support!
+## Thanks to the Gardena devs for the hints and the support!
 [@rettichschnidi](https://github.com/rettichschnidi)\
 [@easybe](https://github.com/easybe)\
 [@broglep-work](https://github.com/broglep-work)
