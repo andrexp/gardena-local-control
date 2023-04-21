@@ -32,6 +32,18 @@ from config import GARDENA_CYCLIC_STATUS_REQUEST_SEC
 from config import MQTT_PUBLISH_RETAIN
 from config import SCRIPT_VERSION
 
+#Delay for publish gardena commands to Lemonbeatd
+GARDENA_COMMAND_PUBLISH_DELAY = 1
+#Delay if no cyclic status request is active
+NO_CYCLIC_STATUS_REQUEST_DELAY = 1
+#Delay to wait for MQTT connect
+WAIT_FOR_MQTT_CONNECT_DELAY = 1
+#Delay to wait for MQTT disconnect
+WAIT_FOR_MQTT_DISCONNECT_DELAY = 1
+#Delay to wait for MQTT publish message
+WAIT_FOR_MQTT_PUBLISH_MESSAGE_DELAY = 1
+#Delay to publish event data to MQTT
+PUBLISH_EVENT_DATA_TO_MQTT_DELAY = 1
 #Class to store nng EventData
 class EventData:
     def __init__(self, deviceid, eventtype, eventvalue):
@@ -157,6 +169,7 @@ def gardenaCommandPublish():
     while True:
             # there must be a message in the queue
             if subscribeCommandDataQueue.empty():
+                time.sleep(GARDENA_COMMAND_PUBLISH_DELAY)
                 continue
             # if there is at least one element try to publish to gardena gateway
             logging.debug("received telegram to publish to gardena gateway")
@@ -181,6 +194,8 @@ def gardenaCyclicStatusRequest():
             for device in cyclicStatusReqList:
                 subscribeCommandDataQueue.put(CommandData(device,"read_status",0))
             time.sleep(cyclicStatusReqTime)
+        else:
+            time.sleep(NO_CYCLIC_STATUS_REQUEST_DELAY)
 
 #Connect callback for MQTT clients
 def connectCallback(client, userdata, flags, rc):
@@ -253,7 +268,7 @@ def waitForMQTTConnect(client):
     #Wait until the connection event has been called.
     while mqttClientData.connectionReturnCode == -1:
         #logging.debug("MQTT in connect wait loop")
-        time.sleep( 1 )
+        time.sleep(WAIT_FOR_MQTT_CONNECT_DELAY)
 #def waitForMQTTConnect():
 
 #method to disconnect the MQTT broker and wait until the connection is disconnected
@@ -274,7 +289,7 @@ def waitForMQTTDisconnect(client):
     #Wait until the disconnection event has been called.
     while mqttClientData.disconnectionReturnCode == -1:
         #logging.debug("MQTT in disconnect wait loop")
-        time.sleep( 1 )
+        time.sleep(WAIT_FOR_MQTT_DISCONNECT_DELAY)
 #def waitForMQTTDisconnect():
 
 #method to send the passed data to the MQTT broker
@@ -295,7 +310,7 @@ def publishMQTTData(client, clientName, dataName, dataValue):
         #Wait until the message has been published or the connection has been disconnected
         while not returnValue.is_published and mqttClientData.disconnectionReturnCode == -1:
             #logging.debug("MQTT in publish wait loop")
-            time.sleep( 1 )
+            time.sleep(WAIT_FOR_MQTT_PUBLISH_MESSAGE_DELAY)
 #def publishMQTTData(client, clientName, dataName, dataValue):
 
 #method to send the passed data to the MQTT broker
@@ -315,7 +330,7 @@ def publishMQTTData(client, clientName, eventData):
         #Wait until the message has been published or the connection has been disconnected
         while not returnValue.is_published and mqttClientData.disconnectionReturnCode == -1:
             #logging.debug("MQTT in publish wait loop")
-            time.sleep( 1 )
+            time.sleep(WAIT_FOR_MQTT_PUBLISH_MESSAGE_DELAY)
 #def publishMQTTData(client, clientName, dataName, dataValue):
 
 #Method to send event data to mqtt
@@ -323,6 +338,7 @@ def publishEventDataToMQTT():
     while True:
         #There must be a message in the queue
         if publishEventDataQueue.empty():
+            time.sleep(PUBLISH_EVENT_DATA_TO_MQTT_DELAY)
             continue
         #Create MQTT client object and add to dict
         client = mqtt.Client(MQTT_CLIENT_ID_BASE + "_PublishEventData")
@@ -357,11 +373,11 @@ def publishEventDataToMQTT():
             client.loop_stop()
             if(mqttClientDict.get(client) != None):
                 mqttClientDict.pop(client)
-        time.sleep( 1 )
 #def sendEventDataToMQTT():
 
 #Method to send mqtt data
 def startSubscribeCommandDataFromMQTT():
+    try:
         #Create MQTT client object and add to dict
         client = mqtt.Client(MQTT_CLIENT_ID_BASE + "_SubscribeCommandData")
         #Set events
@@ -373,6 +389,9 @@ def startSubscribeCommandDataFromMQTT():
         #Connect to the broker
         client.connect(MQTT_BROKER_IP)            
         client.loop_forever()
+    except Exception as e:
+        logging.debug("ERR MQTT Exception (publish event): {}".format(e)) 
+        #TODO Cancel?     
 #def startSubscribeCommandDataFromMQTT():
 
 #-----------------Main program---------------------------
@@ -388,10 +407,10 @@ if __name__ == "__main__":
     except:
         logging.basicConfig(level="INFO")
 
-    sendEventDataToMQTTThread = Thread(target=publishEventDataToMQTT)
-    sendEventDataToMQTTThread.start()
-    sendEventDataToMQTTThread = Thread(target=startSubscribeCommandDataFromMQTT)
-    sendEventDataToMQTTThread.start()
+    publishEventDataToMQTTThread = Thread(target=publishEventDataToMQTT)
+    publishEventDataToMQTTThread.start()
+    subscribeCommandDataToMQTTThread = Thread(target=startSubscribeCommandDataFromMQTT)
+    subscribeCommandDataToMQTTThread.start()
     gardenaEventSubscribeThread = Thread(target=gardenaEventSubscribe)
     gardenaEventSubscribeThread.start()
     gardenaCommandPublishThread = Thread(target=gardenaCommandPublish)
