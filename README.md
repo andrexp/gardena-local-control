@@ -78,7 +78,7 @@ Example:
 
     GardenaLocalControl/012345678901234567890/Command
     {
-        "command": mower_timer
+        "command": "mower_timer"
         "payload": 3600
     }
 #### park_until_next_task
@@ -90,7 +90,7 @@ Example:
 
     GardenaLocalControl/012345678901234567890/Command
     {
-        "command": park_until_next_task
+        "command": "park_until_next_task"
         "payload": true
     }
 #### park_until_further_notice
@@ -102,21 +102,23 @@ Example:
 
     GardenaLocalControl/012345678901234567890/Command
     {
-        "command": park_until_further_notice
+        "command": "park_until_further_notice"
         "payload": true
     }
-#### cyclic_status_req_enable/cyclic_status_req_disable
-Enable cyclic status requests for specified device in payload. The time between the requests is selected by the command payload. Setting the time to "0" (without quotes) disables the cyclic status request. Note the time selection through the payload affects all cyclic status requests and cannot be selected separately at this time (TODO).
 
-accepted payload: integer value for cyclic status request in seconds
+#### read_status
+Read the status of given deviceid through topic address. The answer of the command will be published to the event-queue. Many interesting information can be gathered. It may be useful to build a rule in an external smart home application like openHAB or HomeAssistant to call this function cyclic.
 
-Example: 
+accepted payload: "true" (without quotes)
+
+Example:
 
     GardenaLocalControl/012345678901234567890/Command
     {
-        "command": cyclic_status_req_enable     # enables cyclic status requests
-        "payload": 60                           # set time to 60 sec
+        "command": "read_status"
+        "payload": true
     }
+
 ## FAQ
 
 ### How do I root my Gardena Smart Gateway and prepare it for using the script
