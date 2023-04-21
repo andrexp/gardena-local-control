@@ -8,6 +8,8 @@ First, the explained method including installing the script or parts of software
 
 This small script is for simple communication between the Gardena Smart Gateway and a MQTT broker of your desire - **without any need of cloud infrastructure**. It has been tested with the Gardena Smart Gateway (Art. No. 190005). Required prequisions are rooting the Gateway and enabling the nngforward-service (see FAQ below)
 
+Note that this piece of software is currently in an early state. We wanted to push anything as soon as possible to share it to all of you. Take care with us 💚
+
 ## Installation
 
 1.  Check requirements:
