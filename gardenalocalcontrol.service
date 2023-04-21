@@ -1,10 +1,10 @@
 [Unit]
 Description=GardenaLocalControl with MQTT Server
 After=network.target
-ConditionPathExists=/???/gardenalocalcontrol
+ConditionPathExists=/opt/gardenalocalcontrol
 [Service]
 Type=forking
-ExecStart=/usr/bin/python3 '/???/gardenalocalcontrol/gardenalocalcontrol.py'
+ExecStart=/usr/bin/python3 '/opt/gardenalocalcontrol/gardenalocalcontrol.py'
 TimeoutSec=0
 StandardOutput=tty
 RemainAfterExit=yes

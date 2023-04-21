@@ -9,13 +9,13 @@ echo "Install dependencies"
 pip3 install paho-mqtt
 pip install paho-mqtt
 echo "Copy needed files"
-if [ ! -d "/???/gardenalocalcontrol/" ];then
-	mkdir /???/gardenalocalcontrol/
-	chown -R $USER /???/gardenalocalcontrol/
-	chmod -R 0755 /???/gardenalocalcontrol/
+if [ ! -d "/opt/gardenalocalcontrol/" ];then
+	mkdir /opt/gardenalocalcontrol/
+	chown -R $USER /opt/gardenalocalcontrol/
+	chmod -R 0755 /opt/gardenalocalcontrol/
 fi
 
-cp gardenalocalcontrol.py /???/gardenalocalcontrol
+cp gardenalocalcontrol.py /opt/gardenalocalcontrol
 
 cp gardenalocalcontrol.service /etc/systemd/system
 chmod a+x /etc/systemd/system/gardenalocalcontrol.service
