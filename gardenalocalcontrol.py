@@ -134,7 +134,6 @@ def gardenaEventSubscribe():
 
 def gardenaCommandPublish():
     while True:
-        try:
             # there must be a message in the queue
             if subscribeCommandDataQueue.empty():
                 continue
@@ -142,11 +141,12 @@ def gardenaCommandPublish():
             logging.debug("received telegram to publish to gardena gateway")
             item = subscribeCommandDataQueue.get()
             if gardenaCommandBuilder(item):
-                with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
-                    req.send(gardenaCommandBuilder(item))
-                    logging.debug(req.recv())
-        except Exception as e:
-                logging.info("ERR while connecting to nngforward command request pipe: {}".format(e))
+                try:
+                    with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
+                        req.send(gardenaCommandBuilder(item))
+                        logging.debug(req.recv())
+                except Exception as e:
+                        logging.info("ERR while connecting to nngforward command request pipe: {}".format(e))
 
 
 #Connect callback for MQTT clients
