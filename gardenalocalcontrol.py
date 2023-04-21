@@ -164,7 +164,7 @@ def gardenaCyclicStatusRequest():
         if cyclicStatusReqTime:
             # request status for all deviceids in list
             for device in cyclicStatusReqList:
-                subscribeCommandDataQueue.put(EventData(device,"read_status",0))
+                subscribeCommandDataQueue.put(CommandData(device,"read_status",0))
             time.sleep(cyclicStatusReqTime)
 
 #Connect callback for MQTT clients
