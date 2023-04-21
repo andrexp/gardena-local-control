@@ -153,6 +153,11 @@ flag the gateway prepares the local access to the lemonbeatd communication. You 
 
         /etc/sysupgrade.conf
 
+It´s recommended to add the following files/paths to this file:
+    /home/root/.ssh/authorized_keys
+    /opt
+    /etc/systemd/system/gardenalocalcontrol.service
+
 In addition keep in mind that the storage of the Gardena Smart Gateway is limited. There are only a few megabytes free. If you install all the dependencies and you want to have some logging on it you may run out of space. But the main advantage of this method is you don't need to care about networking problems. Why this is important? See next solution.
 
 2.  You install the script on another machine e.g. a RaspberryPi or any other SoC. If you do so you have to mirror the communication ports onto the serving machine with:
