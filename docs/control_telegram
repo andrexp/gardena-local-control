@@ -60,8 +60,13 @@ Zone 3
 StatusID
 /network/<id-gw??>/device/<id-mower??>/service/<id-??>/value/<id-??>
 
-10.0 = Mower deactivated (STOP was hit)
-14.0 = Mower activated, no wire signal
+1 = Mow
+2 = Searching charging station
+3 = Parked, charging
+4 = Travelling to start point
+8 = Parked (park selected??)
+10 = Mower deactivated (STOP was hit)
+14 = Mower activated, no wire signal
 
 
 Activate hibernation
@@ -69,3 +74,4 @@ Activate hibernation
 
 Deactivate hibernation, same as start with schedule
 <data>B20701010000</data>
+

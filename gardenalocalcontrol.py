@@ -34,9 +34,8 @@ class EventData:
 
 #Class to store nng commandData
 class CommandData:
-    def __init__(self, deviceid, operation, command, payload):
+    def __init__(self, deviceid, command, payload):
         self.deviceid = deviceid
-        self.operation = operation
         self.command = command
         self.payload = payload
         
@@ -55,21 +54,40 @@ subscribeCommandDataQueue = Queue()
 mqttClientDict = dict()
 
 def gardenaCommandBuilder(command):
+    # init command with valid values
+    operation = "read"
+    gardenaCommand = "status"
+    varType = "vi"
+    gardenaPayload = "0"
+    
     try:
         # build expected command string to be sent to command queue of the gardena gateway
-        cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},'.format(command.deviceid)
-        cmd_str += '"op":"{}"'.format(command.operation)
-        cmd_str += ',"payload":{{"{}":{{"ts":{}'.format(command.command, int(time.time()))
-
-        if command.command == "mower_timer" or command.command == "status":
-            cmd_str += ',"vi": {}}}}}}}]'.format(command.payload)
-        elif command.command == "action_paused_until_1":
-            cmd_str += ',"vo": "{}"}}}}}}]'.format(command.payload)
+        if command.command == "mower_timer":
+            operation = "write"
+            gardenaCommand = "mower_timer"
+            varType = "vi"
+            gardenaPayload = command.payload
+        elif command.command == "park_until_next_task" and command.payload:
+            operation = "write"
+            gardenaCommand = "action_paused_until_1"
+            varType = "vi"
+            gardenaPayload = "sgcBAQAA"
+        elif command.command == "park_until_further_notice" and command.payload:
+            operation = "write"
+            gardenaCommand = "action_paused_until_1"
+            varType = "vi"
+            gardenaPayload = "+AcMHxYA"
+        elif command.command == "read_status":
+            operation = "read"
+            gardenaCommand = "status"
+            varType = "vi"
         else:
             # further commands have to be first observed, all commands which are not in list above will be ignored
             return False
+        
         logging.debug("Built command string: {}".format(bytes(cmd_str, encoding='utf-8')))
         # return resulting command string byte-coded
+        cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},"op":"{}","payload":{{"{}":{{"ts":{},"{}": {}}}}}}}]'.format(command.deviceid, operation, gardenaCommand, int(time.time()), varType, gardenaPayload)
         return bytes(cmd_str, encoding='utf-8')   
     
     except Exception as e:
@@ -87,10 +105,6 @@ def gardenaEventInterpreter(event_str):
         # parse JSON
         gardenaEventDict = json.loads(event_str)[0]
         deviceId = gardenaEventDict["entity"]["device"]
-        subPath = gardenaEventDict["entity"]["path"]
-        sequence = gardenaEventDict["metadata"]["sequence"]
-        source = gardenaEventDict["metadata"]["source"]
-        operation = gardenaEventDict["op"]
         payload = gardenaEventDict["payload"]
 
         logging.debug("gardenaEvtParse: Message from deviceId: {}, payload: {}".format(deviceId, payload))
@@ -104,9 +118,7 @@ def gardenaEventInterpreter(event_str):
     except Exception as e:
         logging.debug("ERR Parsing JSON-Data: {}".format(e))
         # if no valid interpetation is possible set type to unknown and value to raw event_str
-        ed.eventtype = "unknown"
-        ed.eventvalue = event_str
-        publishEventDataQueue.put(ed)
+        publishEventDataQueue.put(EventData("unknown","unknown",event_str))
 
 def gardenaEventSubscribe():
     logging.debug("gardenaEventSubscribe Task is start reading")
@@ -173,7 +185,6 @@ def subscribeCommandDataCallback(client, userdata, msg):
         logging.debug(msg.topic + ": " + str(msg.payload))
         json_command = json.loads(msg.payload)
         cd.deviceid = json_command["deviceid"]
-        cd.operation = json_command["op"]
         cd.command = json_command["command"]
         cd.payload = json_command["payload"]
         subscribeCommandDataQueue.put(cd)
