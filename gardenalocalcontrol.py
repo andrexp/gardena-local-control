@@ -207,6 +207,9 @@ def subscribeCommandDataCallback(client, userdata, msg):
     cd = CommandData("","","")
     try:
         logging.debug("MQTT received command: " + msg.topic + ": " + str(msg.payload))
+        # extract deviceid from topic
+        cd.deviceid = msg.topic.split("/")[1]
+        # parse command JSON
         json_command = json.loads(msg.payload)
         cd.command = json_command["command"]
         cd.payload = json_command["payload"]
