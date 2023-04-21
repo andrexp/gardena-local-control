@@ -1,14 +1,15 @@
 [Unit]
 Description=GardenaLocalControl with MQTT Server
-After=network.target
+After=nngforward-lemonbeatd.service
+Wants=nngforward-lemonbeatd.service
 ConditionPathExists=/opt/gardenalocalcontrol
+
 [Service]
-Type=forking
 ExecStart=/usr/bin/python3 '/opt/gardenalocalcontrol/gardenalocalcontrol.py'
-TimeoutSec=0
-StandardOutput=tty
-RemainAfterExit=yes
-SysVStartPriority=99
+WorkingDirectory=/opt/gardenalocalcontrol
+StandardOutput=inherit
+StandardError=inherit
 Restart=always
+
 [Install]
 WantedBy=multi-user.target
