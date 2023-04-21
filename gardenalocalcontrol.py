@@ -1,6 +1,5 @@
 
 # TODO:
-# - all: CPU load is abnormal high on smart gateway, why??
 # - andrexp: When mower is currently active, park_until_next_task does not work, maybe there must be sent two commands (first park_until_further_notice then park_until_next_task)
 
 #!/usr/bin/python3
@@ -44,6 +43,9 @@ WAIT_FOR_MQTT_DISCONNECT_DELAY = 1
 WAIT_FOR_MQTT_PUBLISH_MESSAGE_DELAY = 1
 #Delay to publish event data to MQTT
 PUBLISH_EVENT_DATA_TO_MQTT_DELAY = 1
+#Topic to send the Client state
+STATE_TOPIC = "State"
+
 #Class to store nng EventData
 class EventData:
     def __init__(self, deviceid, eventtype, eventvalue):
@@ -229,7 +231,8 @@ def disconnectCallback(client, userdata, rc):
 
 #Connect callback for subscribe command data
 def connectSubscribeCommandDataCallback(client, userdata, flags, rc):
-    client.subscribe(MQTT_TOPIC_SUBSCRIBE.format("#"))
+    client.publish(MQTT_TOPIC_PUBLISH.format(STATE_TOPIC), "Online", qos=1, retain=True)
+    client.subscribe(MQTT_TOPIC_SUBSCRIBE)
 #def connectSubscribeCommandDataCallback(client, userdata, flags, rc):
 
 #callback with received command data
@@ -389,6 +392,7 @@ def startSubscribeCommandDataFromMQTT():
         #Set username and pasword if authentication is required
         if MQTT_AUTHENTICATION:
             client.username_pw_set(username=MQTT_BROKER_USER,password=MQTT_BROKER_PASSWORD)
+        client.will_set(MQTT_TOPIC_PUBLISH.format(STATE_TOPIC), "Offline", 1,retain=True)
         #Connect to the broker
         client.connect(MQTT_BROKER_IP)            
         client.loop_forever()
