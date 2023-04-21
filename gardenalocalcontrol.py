@@ -123,24 +123,30 @@ def gardenaEventInterpreter(event_str):
 def gardenaEventSubscribe():
     logging.debug("gardenaEventSubscribe Task is start reading")
     while True:
-        with Sub0(dial=GARDENA_NNG_FORWARD_PATH_EVT) as sub0:
-            sub0.subscribe("")
-            received_telegram = sub0.recv()
-            logging.debug("received telegram from nngforward")
-            gardenaEventInterpreter(received_telegram.decode('utf-8'))
+        try:
+            with Sub0(dial=GARDENA_NNG_FORWARD_PATH_EVT) as sub0:
+                sub0.subscribe("")
+                received_telegram = sub0.recv()
+                logging.debug("received telegram from nngforward")
+                gardenaEventInterpreter(received_telegram.decode('utf-8'))
+        except Exception as e:
+                logging.info("ERR while connecting to nngforward subscription: {}".format(e))
 
 def gardenaCommandPublish():
     while True:
-        # there must be a message in the queue
-        if subscribeCommandDataQueue.empty():
-            continue
-        # if there is at least one element try to publish to gardena gateway
-        logging.debug("received telegram to publish to gardena gateway")
-        item = subscribeCommandDataQueue.get()
-        if gardenaCommandBuilder(item):
-            with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
-                req.send(gardenaCommandBuilder(item))
-                logging.debug(req.recv())
+        try:
+            # there must be a message in the queue
+            if subscribeCommandDataQueue.empty():
+                continue
+            # if there is at least one element try to publish to gardena gateway
+            logging.debug("received telegram to publish to gardena gateway")
+            item = subscribeCommandDataQueue.get()
+            if gardenaCommandBuilder(item):
+                with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
+                    req.send(gardenaCommandBuilder(item))
+                    logging.debug(req.recv())
+        except Exception as e:
+                logging.info("ERR while connecting to nngforward command request pipe: {}".format(e))
 
 
 #Connect callback for MQTT clients
