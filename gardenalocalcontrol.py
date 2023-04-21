@@ -75,12 +75,12 @@ def gardenaCommandBuilder(command):
         elif command.command == "park_until_next_task" and command.payload:
             operation = "write"
             gardenaCommand = "action_paused_until_1"
-            varType = "vi"
+            varType = "vo"
             gardenaPayload = "\"sgcBAQAA\""
         elif command.command == "park_until_further_notice" and command.payload:
             operation = "write"
             gardenaCommand = "action_paused_until_1"
-            varType = "vi"
+            varType = "vo"
             gardenaPayload = "\"+AcMHxYA\""
         elif command.command == "cyclic_status_req":
             cyclicStatusReqList.append(command.deviceid)
