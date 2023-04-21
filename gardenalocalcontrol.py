@@ -22,6 +22,7 @@ from config import MQTT_TOPIC_PUBLISH
 from config import MQTT_PUBLISH_RETAIN
 from config import GARDENA_NNG_FORWARD_PATH_EVT
 from config import GARDENA_NNG_FORWARD_PATH_CMD
+from config import GARDENA_CYCLIC_STATUS_REQUEST_SEC
 from config import MQTT_PUBLISH_RETAIN
 from config import SCRIPT_VERSION
 
@@ -52,6 +53,10 @@ publishEventDataQueue = Queue()
 subscribeCommandDataQueue = Queue()
 #List for all mqtt clients
 mqttClientDict = dict()
+#List for all devices to receive cyclic status requests
+cyclicStatusReqList = list()
+#Default timeout for cyclic status requests
+cyclicStatusReqTime = GARDENA_CYCLIC_STATUS_REQUEST_SEC
 
 def gardenaCommandBuilder(command):
     # init command with valid values
@@ -77,6 +82,9 @@ def gardenaCommandBuilder(command):
             gardenaCommand = "action_paused_until_1"
             varType = "vi"
             gardenaPayload = "+AcMHxYA"
+        elif command.command == "cyclic_status_req":
+            cyclicStatusReqList.append(command.deviceid)
+            cyclicStatusReqTime = command.payload
         elif command.command == "read_status":
             operation = "read"
             gardenaCommand = "status"
@@ -144,12 +152,20 @@ def gardenaCommandPublish():
                         req.send(gardenaCommandBuilder(item))
                         req_answer = req.recv()
                         logging.debug(req_answer)
-                        # interpret answer when reading status, to transmit received information to MQTT
+                        # interpret answer when reading status, to transmit received information to
                         if item.command == "read_status":
                             gardenaEventInterpreter(req_answer)
                 except Exception as e:
                         logging.info("ERR while connecting to nngforward command request pipe: {}".format(e))
 
+def gardenaCyclicStatusRequest():
+    while True:
+        # disable cyclic requests it cyclicStatusReqTime is 0
+        if cyclicStatusReqTime:
+            # request status for all deviceids in list
+            for device in cyclicStatusReqList:
+                subscribeCommandDataQueue.put(EventData(device,"read_status",0))
+            time.sleep(cyclicStatusReqTime)
 
 #Connect callback for MQTT clients
 def connectCallback(client, userdata, flags, rc):
@@ -363,6 +379,8 @@ if __name__ == "__main__":
     gardenaEventSubscribeThread.start()
     gardenaCommandPublishThread = Thread(target=gardenaCommandPublish)
     gardenaCommandPublishThread.start()
+    gardenaCyclicStatusRequestThread = Thread(target=gardenaCyclicStatusRequest)
+    gardenaCyclicStatusRequestThread.start()
 
     while True:
 
