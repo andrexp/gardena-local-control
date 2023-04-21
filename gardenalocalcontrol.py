@@ -1,5 +1,11 @@
+
+# TODO:
+# - all: CPU load is abnormal high on smart gateway, why??
+# - andrexp: When mower is currently active, park_until_next_task does not work, maybe there must be sent two commands (first park_until_further_notice then park_until_next_task)
+
 #!/usr/bin/python3
 # coding: utf-8
+
 import time
 import threading
 import paho.mqtt.client as mqtt
