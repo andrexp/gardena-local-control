@@ -72,7 +72,7 @@ def gardenaCommandBuilder(command):
             gardenaCommand = "mower_timer"
             varType = "vi"
             gardenaPayload = command.payload
-        elif command.command == "park_until_next_task" and command.payload:
+        elif command.command == "park_until_next_task" and command.payload or command.command == "start_schedule" and command.payload:
             operation = "write"
             gardenaCommand = "action_paused_until_1"
             varType = "vo"
