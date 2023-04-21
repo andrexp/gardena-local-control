@@ -247,7 +247,7 @@ def waitForMQTTConnect(client):
     #Wait until the connection event has been called.
     while mqttClientData.connectionReturnCode == -1:
         #logging.debug("MQTT in connect wait loop")
-        time.sleep( 0.0001 )
+        time.sleep( 1 )
 #def waitForMQTTConnect():
 
 #method to disconnect the MQTT broker and wait until the connection is disconnected
@@ -268,7 +268,7 @@ def waitForMQTTDisconnect(client):
     #Wait until the disconnection event has been called.
     while mqttClientData.disconnectionReturnCode == -1:
         #logging.debug("MQTT in disconnect wait loop")
-        time.sleep( 0.0001 )
+        time.sleep( 1 )
 #def waitForMQTTDisconnect():
 
 #method to send the passed data to the MQTT broker
@@ -289,7 +289,7 @@ def publishMQTTData(client, clientName, dataName, dataValue):
         #Wait until the message has been published or the connection has been disconnected
         while not returnValue.is_published and mqttClientData.disconnectionReturnCode == -1:
             #logging.debug("MQTT in publish wait loop")
-            time.sleep( 0.0001 )
+            time.sleep( 1 )
 #def publishMQTTData(client, clientName, dataName, dataValue):
 
 #method to send the passed data to the MQTT broker
@@ -309,7 +309,7 @@ def publishMQTTData(client, clientName, eventData):
         #Wait until the message has been published or the connection has been disconnected
         while not returnValue.is_published and mqttClientData.disconnectionReturnCode == -1:
             #logging.debug("MQTT in publish wait loop")
-            time.sleep( 0.0001 )
+            time.sleep( 1 )
 #def publishMQTTData(client, clientName, dataName, dataValue):
 
 #Method to send event data to mqtt
@@ -351,7 +351,7 @@ def publishEventDataToMQTT():
             client.loop_stop()
             if(mqttClientDict.get(client) != None):
                 mqttClientDict.pop(client)
-        time.sleep( 0.0001 )
+        time.sleep( 1 )
 #def sendEventDataToMQTT():
 
 #Method to send mqtt data
@@ -392,7 +392,3 @@ if __name__ == "__main__":
     gardenaCommandPublishThread.start()
     gardenaCyclicStatusRequestThread = Thread(target=gardenaCyclicStatusRequest)
     gardenaCyclicStatusRequestThread.start()
-
-    while True:
-
-        time.sleep(10)

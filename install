@@ -10,11 +10,18 @@ pip3 install paho-mqtt pynng
 
 echo "Copy needed files"
 if [ ! -d "/opt/gardenalocalcontrol/" ];then
+	if [ ! -d "/opt/" ];then
+			mkdir /opt/
+			chown -R $USER /opt/
+			chmod -R 0755 /opt/
+	fi
 	mkdir /opt/gardenalocalcontrol/
 	chown -R $USER /opt/gardenalocalcontrol/
 	chmod -R 0755 /opt/gardenalocalcontrol/
 fi
 
 cp gardenalocalcontrol.py /opt/gardenalocalcontrol
+cp config.py /opt/gardenalocalcontrol
 
+echo "Starting script"
 python3 /opt/gardenalocalcontrol/gardenalocalcontrol.py

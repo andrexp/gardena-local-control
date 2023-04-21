@@ -13,6 +13,8 @@ This small script is for simple communication between the Gardena Smart Gateway 
 1.  Check requirements:
 
         Python3
+        Python-PIP3
+
 2.  Clone repository
 
         git clone https://github.com/andrexp/gardena-local-control.git
