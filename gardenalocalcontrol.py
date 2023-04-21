@@ -99,8 +99,6 @@ def gardenaCommandBuilder(command):
     return False
 
 def gardenaEventInterpreter(event_str):
-
-
     try:
         # parse JSON
         gardenaEventDict = json.loads(event_str)[0]
@@ -144,7 +142,11 @@ def gardenaCommandPublish():
                 try:
                     with Req0(dial=GARDENA_NNG_FORWARD_PATH_CMD) as req:
                         req.send(gardenaCommandBuilder(item))
-                        logging.debug(req.recv())
+                        req_answer = req.recv()
+                        logging.debug(req_answer)
+                        # interpret answer when reading status, to transmit received information to MQTT
+                        if item.command == "read_status":
+                            gardenaEventInterpreter(req_answer)
                 except Exception as e:
                         logging.info("ERR while connecting to nngforward command request pipe: {}".format(e))
 
