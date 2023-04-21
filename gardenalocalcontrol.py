@@ -206,9 +206,8 @@ def connectSubscribeCommandDataCallback(client, userdata, flags, rc):
 def subscribeCommandDataCallback(client, userdata, msg):
     cd = CommandData("","","")
     try:
-        logging.debug(msg.topic + ": " + str(msg.payload))
+        logging.debug("MQTT received command: " + msg.topic + ": " + str(msg.payload))
         json_command = json.loads(msg.payload)
-        cd.deviceid = json_command["deviceid"]
         cd.command = json_command["command"]
         cd.payload = json_command["payload"]
         subscribeCommandDataQueue.put(cd)
