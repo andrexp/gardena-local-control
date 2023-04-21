@@ -9,27 +9,33 @@ First, the explained method including installing the script or parts of software
 This small script is for simple communication between the Gardena Smart Gateway and a MQTT broker of your desire - **without any need of cloud infrastructure**. It has been tested with the Gardena Smart Gateway (Art. No. 190005). Required prequisions are rooting the Gateway and enabling the nngforward-service (see FAQ below)
 
 ## Installation
-### Requirements
-Python3
 
-### Clone repository
+1.  Check requirements:
 
-    git clone https://github.com/andrexp/gardena-local-control.git
-    cd gardena-local-control
-### Install and execute
-Simply use the "install"-script:
+        Python3
+2.  Clone repository
 
-    sudo chmod +x install
-    sudo ./install
+        git clone https://github.com/andrexp/gardena-local-control.git
+        cd gardena-local-control
+3.  Edit config.py
+    Customize your the config.py file for your needs. Especially the MQTT broker address should be set.
 
-This will copy the gardenalocalcontrol.py script to /opt/gardenalocalcontrol and executes instantly after
+Then you have two options to install:
 
-### Install as server
-Simply use the "install_service"-script:
+1.  Install and execute\
+    Simply use the "install"-script:
 
-    sudo ./install_service
+        sudo chmod +x install
+        sudo ./install
 
-This will also copy the gardenalocalcontrol.py script to /opt/gardenalocalcontrol but in addition a .service-File for systemd is created. This will install the script as service and make it start at boot automatically.
+    This will copy the gardenalocalcontrol.py script to /opt/gardenalocalcontrol and executes instantly after
+2.  Install as server (OPTIONAL to 4.)
+    Simply use the "install_service"-script:
+
+        sudo chmod +x install_service
+        sudo ./install_service
+
+    This will also copy the gardenalocalcontrol.py script to /opt/gardenalocalcontrol but in addition a .service-File for systemd is created. This will install the script as service and make it start at boot automatically.
 
 ## Status messages to receive via GardenaLocalControl
 The script subscribes to the interprocess communication of lemonbeatd (rf-component which does communication with the wireless devices as the Gardena Smart Sileno mowers) and the Gardena cloud/shadoway connector. If a message is received, the script tries to interpet any component of it. Because not all of the information to be gathered is known at this point all information are pushed to the MQTT broker as it is. Therefore the following format and topics are used:
