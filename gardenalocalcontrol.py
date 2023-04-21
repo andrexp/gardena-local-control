@@ -75,8 +75,6 @@ subscribeCommandDataQueue = Queue()
 mqttClientDict = dict()
 #List for all devices to receive cyclic status requests
 cyclicStatusReqList = list()
-#Default timeout for cyclic status requests
-cyclicStatusReqTime = GARDENA_CYCLIC_STATUS_REQUEST_SEC
 
 def gardenaCommandBuilder(command):
     # init command with valid values
