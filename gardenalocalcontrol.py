@@ -82,9 +82,16 @@ def gardenaCommandBuilder(command):
             gardenaCommand = "action_paused_until_1"
             varType = "vo"
             gardenaPayload = "\"+AcMHxYA\""
-        elif command.command == "cyclic_status_req":
+        elif command.command == "cyclic_status_req_enable":
             cyclicStatusReqList.append(command.deviceid)
             cyclicStatusReqTime = command.payload
+            # no further command processing is required
+            return False
+        elif command.command == "cyclic_status_req_disable":
+            cyclicStatusReqList.remove(command.deviceid)
+            cyclicStatusReqTime = command.payload
+            # no further command processing is required
+            return False
         elif command.command == "read_status":
             operation = "read"
             gardenaCommand = "status"
