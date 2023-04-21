@@ -85,11 +85,13 @@ def gardenaCommandBuilder(command):
         elif command.command == "cyclic_status_req_enable":
             cyclicStatusReqList.append(command.deviceid)
             cyclicStatusReqTime = command.payload
+            logging.debug("Added {} to obtain cyclic status.".format(command.deviceid))
             # no further command processing is required
             return False
         elif command.command == "cyclic_status_req_disable":
             cyclicStatusReqList.remove(command.deviceid)
             cyclicStatusReqTime = command.payload
+            logging.debug("Removed {} to obtain cyclic status.".format(command.deviceid))
             # no further command processing is required
             return False
         elif command.command == "read_status":
