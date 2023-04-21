@@ -84,10 +84,10 @@ def gardenaCommandBuilder(command):
         else:
             # further commands have to be first observed, all commands which are not in list above will be ignored
             return False
-        
-        logging.debug("Built command string: {}".format(bytes(cmd_str, encoding='utf-8')))
+
         # return resulting command string byte-coded
         cmd_str = '[{{"entity":{{"device":"{}","path":"lemonbeat/0"}},"metadata":{{"sequence":1,"source":"lemonbeatd"}},"op":"{}","payload":{{"{}":{{"ts":{},"{}": {}}}}}}}]'.format(command.deviceid, operation, gardenaCommand, int(time.time()), varType, gardenaPayload)
+        logging.debug("Built command string: {}".format(bytes(cmd_str, encoding='utf-8')))
         return bytes(cmd_str, encoding='utf-8')   
     
     except Exception as e:
