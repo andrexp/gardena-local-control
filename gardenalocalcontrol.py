@@ -237,13 +237,16 @@ def subscribeCommandDataCallback(client, userdata, msg):
     cd = CommandData("","","")
     try:
         logging.debug("MQTT received command: " + msg.topic + ": " + str(msg.payload))
-        # extract deviceid from topic
-        cd.deviceid = msg.topic.split("/")[1]
-        # parse command JSON
-        json_command = json.loads(msg.payload)
-        cd.command = json_command["command"]
-        cd.payload = json_command["payload"]
-        subscribeCommandDataQueue.put(cd)
+        messageData = msg.topic.split("/")
+        #Only when num of topic params correct and command is the last topic param
+        if len(messageData) == 3 and messageData[2] == "Command" :
+            # extract deviceid from topic
+            cd.deviceid = messageData[1]
+            # parse command JSON
+            json_command = json.loads(msg.payload)
+            cd.command = json_command["command"]
+            cd.payload = json_command["payload"]
+            subscribeCommandDataQueue.put(cd)
     except Exception as e:
         logging.debug("ERR MQTT Exception (subscribe command): {}".format(e))
 #def def subscribeCommandDataCallback(client, userdata, msg):
