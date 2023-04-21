@@ -18,7 +18,7 @@ This small script is for simple communication between the Gardena Smart Gateway 
         git clone https://github.com/andrexp/gardena-local-control.git
         cd gardena-local-control
 3.  Edit config.py
-    Customize your the config.py file for your needs. Especially the MQTT broker address should be set.
+    Customize your the config.py file for your needs. Especially the MQTT broker address should be set. To find out how to get the location of GARDENA_NNG_FORWARD_PATH_EVT and GARDENA_NNG_FORWARD_PATH_CMD see FAQ below.
 
 Then you have two options to install:
 
@@ -139,6 +139,26 @@ BE AWARE YOU WILL LOSING WARRANTY! ANY MODIFICATIONS WILL BE DONE AT YOUR OWN RI
         fw_setenv dev_debug_enable_nngforward 1
 
 9.  Have fun!
+
+### How do I determine the location of GARDENA_NNG_FORWARD_PATH_EVT and GARDENA_NNG_FORWARD_PATH_CMD
+This files are used to create the pipe for accessing the interprocess communication. After enabling the
+
+    dev_debug_enable_nngforward
+
+flag the gateway prepares the local access to the lemonbeatd communication. You have two options to install your script:
+
+1.  You install the script with root access onto your gateway directly. Be aware the files will be deleted in case of a firmware upgrade. To avoid that include your script directory into:
+
+        /etc/sysupgrade.conf
+
+In addition keep in mind that the storage of the Gardena Smart Gateway is limited. There are only a few megabytes free. If you install all the dependencies and you want to have some logging on it you may run out of space. But the main advantage of this method is you don't need to care about networking problems. Why this is important? See next solution.
+
+2.  You install the script on another machine e.g. a RaspberryPi or any other SoC. If you do so you have to mirror the communication ports onto the serving machine with:
+
+        socat UNIX-LISTEN:/tmp/lemonbeatd-event.ipc,fork,reuseaddr,unlink-early TCP:192.168.178.151:28152 &
+        socat UNIX-LISTEN:/tmp/lemonbeatd-command.ipc,fork,reuseaddr,unlink-early TCP:192.168.178.151:28153 &
+
+Keep in mind to check if the process is killed. In this case the communication to the gateway will be lost and no information can be gathered.
 
 ### Where can I find the device_id
 The simplest way to obatin your desired device_id is to observe the output of the GardenaLocalControl when controlling e.g. a mower or any other device through the App.
