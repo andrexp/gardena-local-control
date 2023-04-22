@@ -6,7 +6,7 @@ First, the explained method including installing the script or parts of software
 
 ⚠️ BE AWARE YOU MAY LOSE YOUR WARRANTY! ANY MODIFICATIONS WILL BE DONE AT YOUR OWN RISK! THE GARDENA SUPPORT MAY NOT BE ABLE TO HELP YOU IF YOU BRICK YOUR GATEWAY OR DEVICE PERMANENTLY! ⚠️
 
-This small script is for simple communication between the Gardena Smart Gateway and a MQTT broker of your desire - **without any need of cloud infrastructure**. It has been tested with the Gardena Smart Gateway (Art. No. 190005). Required prequisions are rooting the Gateway and enabling the nngforward-service (see FAQ below)
+This small script is for simple communication between the Gardena Smart Gateway and a MQTT broker of your desire - **without any need of cloud infrastructure**. It has been tested with the Gardena Smart Gateway (Art. No. 190005). Required prequisions are rooting the Gateway and enabling the nngforward-service (see [FAQ](#faq) below)
 
 Note that this piece of software is currently in an early state. We wanted to push anything as soon as possible to share it to all of you. Take care with us 💚
 
@@ -65,7 +65,7 @@ For comfort several commands are available to send via MQTT. The main job is don
 in the following JSON format:
 
     {
-        "command": <command_name>
+        "command": <command_name>,
         "payload": <payload_depending_on_command>
     }
 
@@ -74,14 +74,27 @@ For the first step only basic commands are available for using it with a smart-h
 #### mower_timer
 Start manual mowing with time period. According to app control the valid values are limited to 6 hours. 
 
-accepted payload: integer value for mowing time in seconds
+accepted payload: integer value for mowing time in seconds (in example: 1 hour)
 
 Example:
 
     GardenaLocalControl/012345678901234567890/Command
     {
-        "command": "mower_timer"
+        "command": "mower_timer",
         "payload": 3600
+    }
+
+#### start_schedule
+Start mower with next schedule.
+
+accepted payload: "true" (without quotes)
+
+Example:
+
+    GardenaLocalControl/012345678901234567890/Command
+    {
+        "command": "start_schedule",
+        "payload": true
     }
 #### park_until_next_task
 Park mower until next schedule task would be started
@@ -92,7 +105,7 @@ Example:
 
     GardenaLocalControl/012345678901234567890/Command
     {
-        "command": "park_until_next_task"
+        "command": "park_until_next_task",
         "payload": true
     }
 #### park_until_further_notice
@@ -104,7 +117,7 @@ Example:
 
     GardenaLocalControl/012345678901234567890/Command
     {
-        "command": "park_until_further_notice"
+        "command": "park_until_further_notice",
         "payload": true
     }
 
@@ -117,13 +130,13 @@ Example:
 
     GardenaLocalControl/012345678901234567890/Command
     {
-        "command": "read_status"
+        "command": "read_status",
         "payload": true
     }
 
 ## FAQ
 
-### How do I root my Gardena Smart Gateway and prepare it for using the script
+### - How do I root my Gardena Smart Gateway and prepare it for using the script
 BE AWARE YOU WILL LOSING WARRANTY! ANY MODIFICATIONS WILL BE DONE AT YOUR OWN RISK!
 
 1.  Connect to the UART of the Board. You will find the Pins and required settings in the official [Gardena documentation](https://github.com/husqvarnagroup/smart-garden-gateway-public), you will need a USB to UART-Adapter or a RaspberryPi to be able to connect your computer.
@@ -145,8 +158,11 @@ BE AWARE YOU WILL LOSING WARRANTY! ANY MODIFICATIONS WILL BE DONE AT YOUR OWN RI
         fw_setenv dev_debug_enable_nngforward 1
 
 9.  Have fun!
-
-### How do I determine the location of GARDENA_NNG_FORWARD_PATH_EVT and GARDENA_NNG_FORWARD_PATH_CMD
+<br/>
+### - Help! I installed the script onto my gateway, all files seem to be deleted after a firmware upgrade
+You have to put your files into the file to exclude via firmware updates. See [How do I determine the location of GARDENA_NNG_FORWARD_PATH_EVT and GARDENA_NNG_FORWARD_PATH_CMD](#how-do-i-determine-the-location-of-gardena_nng_forward_path_evt-and-gardena_nng_forward_path_cmd)
+<br/>
+### - How do I determine the location of GARDENA_NNG_FORWARD_PATH_EVT and GARDENA_NNG_FORWARD_PATH_CMD
 This files are used to create the pipe for accessing the interprocess communication. After enabling the
 
     dev_debug_enable_nngforward
@@ -162,6 +178,8 @@ It´s recommended to add the following files/paths to this file:
     /opt
     /etc/systemd/system/gardenalocalcontrol.service
 
+Tip: For this method you don't really need to enable the nngforward. The files mentioned in the default config.py are existent. This is only needed if you plan to install the script on a different machine in your network.
+
 In addition keep in mind that the storage of the Gardena Smart Gateway is limited. There are only a few megabytes free. If you install all the dependencies and you want to have some logging on it you may run out of space. But the main advantage of this method is you don't need to care about networking problems. Why this is important? See next solution.
 
 2.  You install the script on another machine e.g. a RaspberryPi or any other SoC. If you do so you have to mirror the communication ports onto the serving machine with:
@@ -170,9 +188,44 @@ In addition keep in mind that the storage of the Gardena Smart Gateway is limite
         socat UNIX-LISTEN:/tmp/lemonbeatd-command.ipc,fork,reuseaddr,unlink-early TCP:192.168.178.151:28153 &
 
 Keep in mind to check if the process is killed. In this case the communication to the gateway will be lost and no information can be gathered.
-
+<br/>
 ### Where can I find the device_id
 The simplest way to obatin your desired device_id is to observe the output of the GardenaLocalControl when controlling e.g. a mower or any other device through the App.
+<br/>
+
+### - Could you help with a example configuration for openHAB?
+Of course!
+
+1.  First, install [MQTT-Binding](https://www.openhab.org/addons/bindings/mqtt/)
+2.  Create a new MQTT Thing "Generic MQTT Thing"\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/01.png" width=600>
+3.  Go to the newly created MQTT Thing which we call "MQTT Things", click on "Channels"\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/02.png" width=600>
+4.  Create a new MQTT topic listener by clicking "Add Channel"\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/03.png" width=600>
+5.  The first example creates a listener to the "status" topic of a lawn mower. So we create a "Number" value.
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/04.png" width=600>
+6.  Click on "Configure channel" of the newly created MQTT Thing channel\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/05.png" width=600>
+7.  Fill in the "MQTT State Topic"-field as mentioned [above](#status-messages-to-receive-via-gardenalocalcontrol)\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/06.png" width=600>
+8.  Now we just need to add a existing create a new openHAB item\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/07.png" width=600>
+9.  In this example we create a "Number"-item\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/08.png" width=600>
+10.  We are finished. Note that the status is NULL as long as GardenaLocalControl transmits the first status value. This could take some time. Usually you can force send a status value by sending a command to the gateway.\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/09.png" width=600>
+11. Second example: Create the command topic. We do exactly the same steps 3.-6. Note that we now want to have a "Text Value" instead of a "Number". Remember this at point 5. After creating the channel we fill in both: "MQTT Status Topic" and "MQTT Command Topic"\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/10.png" width=600>
+12. Hit the check-box "Show advanced"\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/11.png" width=600>
+13. Fill in the fields for "Incoming Value Transformations". By using JSONPATH we can extract the command from the transmitted JSON-string of the command topic message payload.\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/12.png" width=600>
+14. Again create a new openHAB item as described in 8. We now choose "String" as type. For simple usage add a "Meta Data" to create command options.\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/13.png" width=600>
+15. Insert all available commands so you can easily use them by clicking on items current value.\
+    <img src="docs/manual_oh_mqtt_gardenalocalcontrol/14.png" width=600>
+
 
 ## Thanks to the Gardena devs for the hints and the support!
 [@rettichschnidi](https://github.com/rettichschnidi)\
