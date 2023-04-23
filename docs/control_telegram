@@ -57,17 +57,19 @@ Zone 3
 17	see above
 18	see above
 
-StatusID
-/network/<id-gw??>/device/<id-mower??>/service/<id-??>/value/<id-??>
+Status-Codes
 
 1 = Mow
 2 = Searching charging station
 3 = Parked, charging
 4 = Travelling to start point
-8 = Parked (park selected??)
+8 = Parked until further notice
 10 = Mower deactivated (STOP was hit)
+12 = Error?, deactivated
 14 = Mower activated, no wire signal
 
+Error-Codes
+16 = Stuck in charging station
 
 Activate hibernation
 <data>F60701120000</data>

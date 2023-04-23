@@ -6,7 +6,7 @@ First, the explained method including installing the script or parts of software
 
 ⚠️ BE AWARE YOU MAY LOSE YOUR WARRANTY! ANY MODIFICATIONS WILL BE DONE AT YOUR OWN RISK! THE GARDENA SUPPORT MAY NOT BE ABLE TO HELP YOU IF YOU BRICK YOUR GATEWAY OR DEVICE PERMANENTLY! ⚠️
 
-This small script is for simple communication between the Gardena Smart Gateway and a MQTT broker of your desire - **without any need of cloud infrastructure**. It has been tested with the Gardena Smart Gateway (Art. No. 190005). Required prequisions are rooting the Gateway and enabling the nngforward-service (see [FAQ](#faq) below)
+This small script is for simple communication between the Gardena Smart Garden Gateway and a MQTT broker of your desire - **without any need of cloud infrastructure**. It has been tested with the Gardena Smart Garden Gateway (Art. No. 190005). Required prequisions are rooting the Gateway and enabling the nngforward-service (see [FAQ](#faq) below). The Bluetooth powered devices are not covered through this solution.
 
 Note that this piece of software is currently in an early state. We wanted to push anything as soon as possible to share it to all of you. Take care with us 💚
 
@@ -48,6 +48,10 @@ The script subscribes to the interprocess communication of lemonbeatd (rf-compon
 
 device_id: Internal Device-ID of your Gardena device such as Smart Sileno mowers\
 attribute: Interpreted data from subscription as described above
+
+Example output for status-codes. For further information about status- and fault-codes see [FAQ](#faq):
+
+    GardenaLocalControl/012345678901234567890/status 1                  # current status (e.g. if the id is a lawn mower, is mowing)
 
 Example output for battery level:
 
@@ -193,6 +197,15 @@ Keep in mind to check if the process is killed. In this case the communication t
 The simplest way to obatin your desired device_id is to observe the output of the GardenaLocalControl when controlling e.g. a mower or any other device through the App.
 <br/>
 
+### Where can I find information about the status- and fault-codes?
+You can find status- and fault-codes within the following MQTT-topics:
+
+    GardenaLocalControl/<device_id>/status
+    GardenaLocalControl/<device_id>/last_error_code
+
+Unfortunately this is a enumeration which is not fully discovered, yet. We started to reverse engineer the fault codes from the Garden Smart System App. You will find a small documentation with results included in [docs/control_telegram](docs/control_telegram)
+<br/>
+
 ### - Could you help with a example configuration for openHAB?
 Of course!
 
@@ -225,7 +238,6 @@ Of course!
     <img src="docs/manual_oh_mqtt_gardenalocalcontrol/13.png" width=600>
 15. Insert all available commands so you can easily use them by clicking on items current value.\
     <img src="docs/manual_oh_mqtt_gardenalocalcontrol/14.png" width=600>
-
 
 ## Thanks to the Gardena devs for the hints and the support!
 [@rettichschnidi](https://github.com/rettichschnidi)\
