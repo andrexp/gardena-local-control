@@ -8,17 +8,30 @@ fi
 echo "Stopping service"
 systemctl stop gardenalocalcontrol.service
 
+echo "Install dependencies"
+pip3 install paho-mqtt pynng
+
 echo "Copy needed files"
-if [ ! -d "/???/gardenalocalcontrol/" ];then
-	mkdir /???/gardenalocalcontrol/
-	chown -R $USER /???/gardenalocalcontrol/
-	chmod -R 0755 /???/gardenalocalcontrol/
+if [ ! -d "/opt/gardenalocalcontrol/" ];then
+	if [ ! -d "/opt/" ];then
+			mkdir /opt/
+			chown -R $USER /opt/
+			chmod -R 0755 /opt/
+	fi
+	mkdir /opt/gardenalocalcontrol/
+	chown -R $USER /opt/gardenalocalcontrol/
+	chmod -R 0755 /opt/gardenalocalcontrol/
 fi
 
-cp gardenalocalcontrol.py /???/gardenalocalcontrol
+cp gardenalocalcontrol.py /opt/gardenalocalcontrol
+cp config.py /opt/gardenalocalcontrol
 
+echo "Copy service file"
 cp gardenalocalcontrol.service /etc/systemd/system
 chmod a+x /etc/systemd/system/gardenalocalcontrol.service
-echo "Restarting service"
+echo "Executing daemon-reload"
 systemctl --system daemon-reload
+echo "Link service for starting at system start"
+systemctl enable gardenalocalcontrol.service
+echo "Restarting service"
 systemctl restart gardenalocalcontrol.service
