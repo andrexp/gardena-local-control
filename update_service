@@ -31,7 +31,5 @@ cp gardenalocalcontrol.service /etc/systemd/system
 chmod a+x /etc/systemd/system/gardenalocalcontrol.service
 echo "Executing daemon-reload"
 systemctl --system daemon-reload
-echo "Link service for starting at system start"
-systemctl enable gardenalocalcontrol.service
 echo "Restarting service"
 systemctl restart gardenalocalcontrol.service
