@@ -6,7 +6,7 @@ if [ $(whoami) != 'root' ]; then
 fi
 
 echo "Stopping service"
-systemctl stop GardenaLocalControl.service
+systemctl stop gardenalocalcontrol.service
 
 echo "Copy needed files"
 if [ ! -d "/???/gardenalocalcontrol/" ];then
