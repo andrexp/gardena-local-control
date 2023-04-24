@@ -59,17 +59,24 @@ Zone 3
 
 Status-Codes
 
+0 = None
 1 = Mow
 2 = Searching charging station
 3 = Parked, charging
 4 = Travelling to start point
+7 = Parked until next task
 8 = Parked until further notice
 10 = Mower deactivated (STOP was hit)
-12 = Error?, deactivated
+12 = Error, deactivated (??)
 14 = Mower activated, no wire signal
+15 = Mow manually (with time)
 
 Error-Codes
+10 = Upside down
+15 = Lifted
 16 = Stuck in charging station
+17 = Charging station blocked
+
 
 Activate hibernation
 <data>F60701120000</data>
