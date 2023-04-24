@@ -140,7 +140,7 @@ Example:
 
 ## FAQ
 
-### - How do I root my Gardena Smart Gateway and prepare it for using the script
+### How do I root my Gardena Smart Gateway and prepare it for using the script
 BE AWARE YOU WILL LOSING WARRANTY! ANY MODIFICATIONS WILL BE DONE AT YOUR OWN RISK!
 
 1.  Connect to the UART of the Board. You will find the Pins and required settings in the official [Gardena documentation](https://github.com/husqvarnagroup/smart-garden-gateway-public), you will need a USB to UART-Adapter or a RaspberryPi to be able to connect your computer.
@@ -163,10 +163,12 @@ BE AWARE YOU WILL LOSING WARRANTY! ANY MODIFICATIONS WILL BE DONE AT YOUR OWN RI
 
 9.  Have fun!
 <br/>
-### - Help! I installed the script onto my gateway, all files seem to be deleted after a firmware upgrade
+
+### Help! I installed the script onto my gateway, all files seem to be deleted after a firmware upgrade
 You have to put your files into the file to exclude via firmware updates. See [How do I determine the location of GARDENA_NNG_FORWARD_PATH_EVT and GARDENA_NNG_FORWARD_PATH_CMD](#how-do-i-determine-the-location-of-gardena_nng_forward_path_evt-and-gardena_nng_forward_path_cmd)
 <br/>
-### - How do I determine the location of GARDENA_NNG_FORWARD_PATH_EVT and GARDENA_NNG_FORWARD_PATH_CMD
+
+### How do I determine the location of GARDENA_NNG_FORWARD_PATH_EVT and GARDENA_NNG_FORWARD_PATH_CMD
 This files are used to create the pipe for accessing the interprocess communication. After enabling the
 
     dev_debug_enable_nngforward
@@ -206,7 +208,7 @@ You can find status- and fault-codes within the following MQTT-topics:
 Unfortunately this is a enumeration which is not fully discovered, yet. We started to reverse engineer the fault codes from the Garden Smart System App. You will find a small documentation with results included in [docs/control_telegram](docs/control_telegram)
 <br/>
 
-### - Could you help with a example configuration for openHAB?
+### Could you help with a example configuration for openHAB?
 Of course!
 
 1.  First, install [MQTT-Binding](https://www.openhab.org/addons/bindings/mqtt/)
