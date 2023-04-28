@@ -188,21 +188,27 @@ flag the gateway prepares the local access to the lemonbeatd communication. You 
 
         /etc/sysupgrade.conf
 
-It´s recommended to add the following files/paths to this file:
-    /home/root/.ssh/authorized_keys
-    /opt
-    /etc/systemd/system/gardenalocalcontrol.service
+    It's recommended to add the following files/paths to this file:
 
-Tip: For this method you don't really need to enable the nngforward. The files mentioned in the default config.py are existent. This is only needed if you plan to install the script on a different machine in your network.
+        /opt
+        /home/root/.ssh/authorized_keys
+        /usr/lib/python3.8/site-packages
 
-In addition keep in mind that the storage of the Gardena Smart Gateway is limited. There are only a few megabytes free. If you install all the dependencies and you want to have some logging on it you may run out of space. But the main advantage of this method is you don't need to care about networking problems. Why this is important? See next solution.
+    If you have installed gardena-local-control as a service add the following additionally:
+
+        /etc/systemd/system/gardenalocalcontrol.service
+        /etc/systemd/system/multi-user.target.wants/gardenalocalcontrol.service
+
+    Tip: For this method you don't really need to enable the nngforward. The files mentioned in the default config.py are existent. This is only needed if you plan to install the script on a different machine in your network.
+
+    In addition keep in mind that the storage of the Gardena Smart Gateway is limited. There are only a few megabytes free. If you install all the dependencies and you want to have some logging on it you may run out of space. But the main advantage of this method is you don't need to care about networking problems. Why this is important? See next solution.
 
 2.  You install the script on another machine e.g. a RaspberryPi or any other SoC. If you do so you have to mirror the communication ports onto the serving machine with:
 
         socat UNIX-LISTEN:/tmp/lemonbeatd-event.ipc,fork,reuseaddr,unlink-early TCP:192.168.178.151:28152 &
         socat UNIX-LISTEN:/tmp/lemonbeatd-command.ipc,fork,reuseaddr,unlink-early TCP:192.168.178.151:28153 &
 
-Keep in mind to check if the process is killed. In this case the communication to the gateway will be lost and no information can be gathered.
+    Keep in mind to check if the process is killed. In this case the communication to the gateway will be lost and no information can be gathered.
 <br/>
 ### Where can I find the device_id
 The simplest way to obatin your desired device_id is to observe the output of the GardenaLocalControl when controlling e.g. a mower or any other device through the App.
