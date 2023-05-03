@@ -70,8 +70,10 @@ Status-Codes
 12 = Error, deactivated (??)
 14 = Mower activated, no wire signal
 15 = Mow manually (with time)
+16 = Parked, SensorControl
 
 Error-Codes
+1 = Outside working area
 10 = Upside down
 15 = Lifted
 16 = Stuck in charging station
