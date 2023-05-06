@@ -147,6 +147,28 @@ Example:
         "payload": true
     }
 
+#### raw
+With this command all left variations of commands can be sent. Especially new or not fully observed commands can be tested. More complex commands like settings or time schedules can also be used. See [docs/control_telegram](docs/control_telegram) for more information and reversed engineered commands. Note: All bytecodes has to be decoded with Base64 first.
+
+The payload of the command accepts following values:
+
+| Command           |   Possible values                                                                                                  |
+|-------------------|--------------------------------------------------------------------------------------------------------------------|
+| operation         |   read, write                                                                                                      |
+| gardenaCommand    |   all reverse engineered commands or observed topics such as "schedule_config"                                     |
+| varType           |   vi, vo (this seem to be a declaration of a variable Type "i" may stand for integer value, "o" for string value)  |
+| gardenaPayload    |   payload to send coded in Base64                                                                                  |
+
+Example (sends a schedule configuration for ONE schedule from 8:00am to 8:05am Monday-Sunday):
+
+    GardenaLocalControl/012345678901234567890/Command
+    {
+        "command": "raw",
+        "payload": "write,schedule_config,vo,AH8IAAUAAA=="
+    }
+
+
+
 ## FAQ
 
 ### How do I root my Gardena Smart Gateway and prepare it for using the script

@@ -11,6 +11,7 @@ import threading
 import paho.mqtt.client as mqtt
 import logging
 import json
+import base64
 from threading import Thread
 from queue import Queue
 from random import Random
@@ -109,6 +110,15 @@ def gardenaCommandBuilder(command):
             operation = "read"
             gardenaCommand = "status"
             varType = "vi"
+        elif command.command == "raw":
+            raw_cmd_props = command.payload.split(',')
+            operation = raw_cmd_props[0]
+            gardenaCommand = raw_cmd_props[1]
+            varType = raw_cmd_props[2]
+            gardenaPayload = raw_cmd_props[3]
+            # the varType "vo" has to be transmitted as string, therefore adding quotes
+            if varType == "vo":
+                gardenaPayload = "\"" + gardenaPayload + "\""
         else:
             # further commands have to be first observed, all commands which are not in list above will be ignored
             return False
