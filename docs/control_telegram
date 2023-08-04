@@ -97,6 +97,7 @@ Deactivate hibernation, same as start with schedule
 <data>B20701010000</data>
 
 Status-Codes
+* values with question mark (?) must are suggested and need to be confirmed *
 
 0 = None
 1 = Mow
@@ -111,11 +112,16 @@ Status-Codes
 15 = Mow manually (with time)
 16 = Parked, SensorControl
 
+
 Error-Codes
+* values with question mark (?) must are suggested and need to be confirmed *
+
 1 = Outside working area
+2 = No loop signal
 10 = Upside down
 15 = Lifted
 16 = Stuck in charging station
 17 = Charging station blocked
-19 = Problem shock sensor front
+? 18 = collision sensor problem rear
+19 = collision sensor problem front
 71 = Alert! Mower lifted
