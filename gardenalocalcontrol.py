@@ -147,9 +147,16 @@ def gardenaEventInterpreter(event_str):
 
         # fill into object to publish via MQTT, sometimes payload has more than one dataset
         for data in payload.keys():
-            for key in payload[data].keys():
-                if key == "vi" or key == "vo":
-                    publishEventDataQueue.put(EventData(deviceId,data,payload[data][key]))
+            # with gateway software version 7.8.1 payloads comes with additional "_urn" key which value is only a string value instead of key-value-pair(s) again
+            # this leads into wrong data parsing - for fixing all key-value-pairs which are different will be ignored
+            try:
+                # if there is data to read - get value(s)
+                for key in payload[data].keys():
+                    if key == "vi" or key == "vo":
+                        publishEventDataQueue.put(EventData(deviceId,data,payload[data][key]))
+            except:
+                # there is no usable data for us - ignore
+                pass
 
     except Exception as e:
         logging.debug("ERR Parsing JSON-Data: {}".format(e))
