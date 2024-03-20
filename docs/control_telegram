@@ -119,6 +119,7 @@ Error-Codes
 1 = Outside working area
 2 = No loop signal
 10 = Upside down
+12 = Battery empty
 15 = Lifted
 16 = Stuck in charging station
 17 = Charging station blocked
