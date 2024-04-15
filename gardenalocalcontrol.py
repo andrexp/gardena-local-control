@@ -110,7 +110,7 @@ def gardenaCommandBuilder(command):
             operation = "read"
             gardenaCommand = "status"
             varType = "vi"
-        elif command.command == "watering_timer" and command.payload:
+        elif command.command == "watering_timer":
             operation = "write"
             gardenaCommand = "watering_timer_1"
             varType = "vi"
