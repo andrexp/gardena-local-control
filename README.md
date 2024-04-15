@@ -147,6 +147,36 @@ Example:
         "payload": true
     }
 
+#### watering_timer
+Supported devices: Gardena Smart Water Control
+
+Start manual watering with time period in seconds. According to app control the valid values are limited to 90 minutes. 
+
+accepted payload: integer value for watering time in seconds (in example: 1 minute)
+
+Example:
+
+    GardenaLocalControl/012345678901234567890/Command
+    {
+        "command": "watering_timer",
+        "payload": 60
+    }
+    
+#### watering_off
+Supported devices: Gardena Smart Water Control
+
+Stop (manual) watering.
+
+accepted payload: "true" (without quotes)
+
+Example:
+
+    GardenaLocalControl/012345678901234567890/Command
+    {
+        "command": "watering_off",
+        "payload": true
+    }
+    
 #### raw
 With this command all left variations of commands can be sent. Especially new or not fully observed commands can be tested. More complex commands like settings or time schedules can also be used. See [docs/control_telegram](docs/control_telegram) for more information and reversed engineered commands. Note: All bytecodes has to be decoded with Base64 first.
 
