@@ -110,6 +110,16 @@ def gardenaCommandBuilder(command):
             operation = "read"
             gardenaCommand = "status"
             varType = "vi"
+        elif command.command == "watering_timer":
+            operation = "write"
+            gardenaCommand = "watering_timer_1"
+            varType = "vi"
+            gardenaPayload = command.payload
+        elif command.command == "watering_off" and command.payload:
+            operation = "write"
+            gardenaCommand = "watering_timer_1"
+            varType = "vi"
+            gardenaPayload = "0"
         elif command.command == "raw":
             raw_cmd_props = command.payload.split(',')
             operation = raw_cmd_props[0]
