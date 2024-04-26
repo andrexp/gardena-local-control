@@ -244,7 +244,7 @@ flag the gateway prepares the local access to the lemonbeatd communication. You 
 
         /opt
         /home/root/.ssh/authorized_keys
-        /usr/lib/python3.8/site-packages
+        /usr/lib/python3.11/site-packages
 
     If you have installed gardena-local-control as a service add the following additionally:
 
