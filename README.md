@@ -33,7 +33,7 @@ Then you have two options to install:
         sudo ./install
 
     This will copy the gardenalocalcontrol.py script to /opt/gardenalocalcontrol and executes instantly after
-2.  Install as server (OPTIONAL to 4.)
+2.  Install as service (OPTIONAL to 4.)
     Simply use the "install_service"-script:
 
         sudo chmod +x install_service
