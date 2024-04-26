@@ -354,7 +354,7 @@ def publishEventDataToMQTT():
             time.sleep(PUBLISH_EVENT_DATA_TO_MQTT_DELAY)
             continue
         #Create MQTT client object and add to dict
-        client = mqtt.Client(MQTT_CLIENT_ID_BASE + "_PublishEventData")
+        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, MQTT_CLIENT_ID_BASE + "_PublishEventData")
         mqttClientDict.update({client: MQTTClientData(-1, -1)})
         mqttClientData = mqttClientDict[client]
         #Set events
@@ -394,7 +394,7 @@ def startSubscribeCommandDataFromMQTT():
     while not startConnectOK:
         try:
             #Create MQTT client object and add to dict
-            client = mqtt.Client(MQTT_CLIENT_ID_BASE + "_SubscribeCommandData")
+            client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, MQTT_CLIENT_ID_BASE + "_SubscribeCommandData")
             #Set events
             client.on_connect = connectSubscribeCommandDataCallback
             client.on_message = subscribeCommandDataCallback
