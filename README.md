@@ -12,6 +12,118 @@ Note that this piece of software is currently in an early state. We wanted to pu
 
 ## Installation
 
+There are two methods of installation:
+
+1. Install the python script onto the gardena gateway, and have it communicate directly with MQTT on a remote computer.
+
+2. Forward the LemonBeat communications to a remote host via socat, and run the python script there. This option has the advantage that you make minimal
+   changes to the gardena gateway, and you are less constrained with regards to CPU power, memory and storage, which are all very tight on the gardena gateway.
+
+## Installation option 1 - run script on gardena gateway.
+
+1. Connect to the UART of the gateway and log in. Enable remote SSH access and make sure you have access, by adding your public SSH key to the gateway's /home.root/.ssh/authorized_keys file. See the FAQ [How do I root my Gardena Smart Gateway and prepare it for using the script] for details. 
+
+2. Python3 and most prerequisites are already present on the gateway, only the paho-mqtt is missing. So we need to install that. So we first need to install pip, the python 
+   package manager.
+   
+   We just have enough free space to do this, but it barely fits.
+   
+        user@workstation:~$ ssh root@gardena
+        
+        root@gardena:~#df -H /media/rfs/rw	
+        Filesystem                Size      Used Available Use% Mounted on
+        ubi0:overlay             26.0M      2.8M     21.9M  11% /media/rfs/rw
+        
+        root@gardena:~# opkg install python3-pip
+	
+    How is the diskspace usage now?
+	
+	root@gardena:~#df -H /media/rfs/rw	
+	Filesystem                Size      Used Available Use% Mounted on
+	ubi0:overlay             26.0M     21.8M      2.8M  88% /media/rfs/rw
+   
+    Almost out of space... 
+
+3. Install paho-mqtt:
+
+        root@gardena:~# pip3 install paho-mqtt
+
+4. Download the scripts from github, and adjust the configuration:
+
+        root@gardena:~# wget https://github.com/andrexp/gardena-local-control/archive/refs/tags/2.0.0.1.tar.gz
+        root@gardena:~# tar tar -xvf 2.0.0.1.tar.gz
+        root@gardena:~# cd gardena-local-control-2.0.0.1
+        root@gardena:~# vi config.py
+
+    Adjust MQTT_BROKER_IP, MQTT_BROKER_PORT, MQTT_AUTHENTICATION, MQTT_BROKER_USER and MQTT_BROKER_PASSWORD to fit your configuration.
+
+5. Test to see if everything works.
+
+    First, on the MQTT server, in my case a raspberry pi, start monitoring the GardenaLocalControl topic:
+
+        pi@raspberry:~$ mosquitto_sub -v -h 127.0.01 -p 1883 -t 'GardenaLocalControl/#
+
+    Start the script directly on the gardena gateway:
+
+        root@gardena:~# python3 gardenalocalcontrol.py
+
+    In the mosquitto listener, you should see the GardenaLocalControl come online:
+
+        GardenaLocalControl/State Online
+
+    Now in the gardena app, refresh e.g. the battery or the soil moisture reading. You should see the message come through:
+
+        GardenaLocalControl/3034F8EE901298000004E279/command 7
+        GardenaLocalControl/3034F8EE901298000004E279/rf_link_quality 80
+
+    If all is working, hit control-C to stop the script. Time to install.
+
+6. Install your favourite flavour, I recommend install_service:
+
+        root@gardena:~# chmod 755 install_service
+        root@gardena:~# ./install_service
+
+    The service is started at the end of the install script. You should see it come back online in MQTT.
+
+7. Reboot the gateway to make sure the service starts up on boot.
+
+9. Ensure our work is not erased on software upgrade:
+
+        echo "/opt" >> /etc/sysupgrade.conf
+        echo "/home/root/.ssh/authorized_keys" >> /etc/sysupgrade.conf
+        echo "/usr/lib/python3.11/site-packages" >> /etc/sysupgrade.conf
+        echo "/etc/systemd/system/gardenalocalcontrol.service" >> /etc/sysupgrade.conf
+        echo "/etc/systemd/system/multi-user.target.wants/gardenalocalcontrol.service" >> /etc/sysupgrade.conf
+
+10. Cleanup - remove the pip package manager:
+
+        root@gardena:~# opkg remove --autoremove python3-pip
+
+        root@gardena:~#df -H /media/rfs/rw	
+        Filesystem                Size      Used Available Use% Mounted on
+        ubi0:overlay             26.0M     10.7M     13.9M  43% /media/rfs/rw
+
+    Okay, we managed to reclaim some space but we are still out 8 mb to install a 40 kb package... Perhaps a manual install is more prudent next time. But this will require adjustment of the install shell script to skip the dependency check.
+
+## Installation option 2 - forward LemonBeat comms to remote machine and run script there.
+
+### On the gardena gateway
+
+Enable forwarding on the comms:
+
+        root@gardena:~# fw_setenv dev_debug_enable_nngforward 1
+	
+We have to mirror the communication ports onto the serving machine with:
+
+        socat UNIX-LISTEN:/tmp/lemonbeatd-event.ipc,fork,reuseaddr,unlink-early TCP:192.168.178.151:28152 &
+        socat UNIX-LISTEN:/tmp/lemonbeatd-command.ipc,fork,reuseaddr,unlink-early TCP:192.168.178.151:28153 &
+
+Of course adjust the destination IP address (192.168.178.151) to fit your situation.
+
+Keep in mind to check if the process is killed. In this case the communication to the gateway will be lost and no information can be gathered. So after a reboot you'll have to ssh into the gateway and restart the socat commands. Or install a script as a service to start those socat commands.
+
+### On the machine running the python script
+
 1.  Check requirements:
 
         Python3
@@ -21,6 +133,7 @@ Note that this piece of software is currently in an early state. We wanted to pu
 
         git clone https://github.com/andrexp/gardena-local-control.git
         cd gardena-local-control
+	
 3.  Edit config.py
     Customize your the config.py file for your needs. Especially the MQTT broker address should be set. To find out how to get the location of GARDENA_NNG_FORWARD_PATH_EVT and GARDENA_NNG_FORWARD_PATH_CMD see FAQ below.
 
@@ -204,25 +317,45 @@ Example (sends a schedule configuration for ONE schedule from 8:00am to 8:05am M
 ### How do I root my Gardena Smart Gateway and prepare it for using the script
 BE AWARE YOU WILL LOSING WARRANTY! ANY MODIFICATIONS WILL BE DONE AT YOUR OWN RISK!
 
-1.  Connect to the UART of the Board. You will find the Pins and required settings in the official [Gardena documentation](https://github.com/husqvarnagroup/smart-garden-gateway-public), you will need a USB to UART-Adapter or a RaspberryPi to be able to connect your computer.
+1.  Connect to the UART of the Board. You will find the pins and required settings in the official [Gardena documentation](https://github.com/husqvarnagroup/smart-garden-gateway-public), you will need a USB to UART-Adapter or a RaspberryPi to be able to connect your computer.
+
+    Make sure the UART you use is operating at 3.3V. Baud rate to use is 115200 8/N/1. 
+
 2.  Use a terminal application such as PuTTy (on Windows) or screen (on Linux)
 3.  Connect power of the gateway
-4.  Wait until you see a login shell usually something like:
+4.  Wait until booting is finished and you see a login prompt, usually something like:
 
         GARDENA-12affe12 login: 
 
-    will appear.
 5.  Quickly type in "root" (without quotes)
 6.  You have successful gained root access
-7.  Put in your public SSH key and don't forget to use following command to prevent deletion of the key in case of a firmware upgrade:
+7.  Put in your public SSH key using copy and paste:
 
-        fw_setenv dev_debug_allow_local_ssh 1
+        root@gardena:~# echo "<YOUR-PUBLIC-KEY>" >> /home/root/.ssh/authorized_keys
 
-8.  Enable nngforward by the following command:
+8.  Prevent deletion of the key in case of a firmware upgrade by adding the authorized_keys to the exclude file:
 
-        fw_setenv dev_debug_enable_nngforward 1
+        echo "/home/root/.ssh/authorized_keys" >> /etc/sysupgrade.conf
 
-9.  Have fun!
+9. Enable SSH and reload the firewall:
+
+        root@gardena:~# fw_setenv dev_debug_allow_local_ssh 1 && systemctl restart firewall
+
+10. Test you can access via the network from your workstation: 
+
+        user@workstation:~$ ssh root@gardena
+
+11. Reboot the gateway and test again:
+
+        root@gardena:~# reboot
+        user@workstation:~$ ssh root@gardena
+
+12. Okay, all good, we have ssh access. We can now shut the gateway down again, close up the case and reinstall it where it came from.
+
+13.  Have fun! Some other notes:
+
+The gardena gateway seems to be running Husqvarna's own version of OpenWRT, deduced from the usage of the opkg package manager. opkg is configured to use Husqvarna's own package repositories. Various handy packages are available.
+
 <br/>
 
 ### Help! I installed the script onto my gateway, all files seem to be deleted after a firmware upgrade
@@ -262,6 +395,7 @@ flag the gateway prepares the local access to the lemonbeatd communication. You 
 
     Keep in mind to check if the process is killed. In this case the communication to the gateway will be lost and no information can be gathered.
 <br/>
+
 ### Where can I find the device_id
 The simplest way to obatin your desired device_id is to observe the output of the GardenaLocalControl when controlling e.g. a mower or any other device through the App.
 <br/>
