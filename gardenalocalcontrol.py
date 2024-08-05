@@ -265,9 +265,9 @@ def subscribeCommandDataCallback(client, userdata, msg):
 #wait until the connection is established
 #client: MQTT client object with which the connection should be established
 #brokerAddress: address of the MQTT broker to connect to
-def connectMQTTBrokerAndWait(client, brokerAddress): 
+def connectMQTTBrokerAndWait(client, brokerAddress, brokerPort): 
     #Connect to the broker
-    client.connect(brokerAddress)
+    client.connect(brokerAddress, brokerPort)
     #Wait until the connection event has been called.
     waitForMQTTConnect(client)
 #def connectMQTTBrokerAndWait(client, brokerAddress):
@@ -366,7 +366,7 @@ def publishEventDataToMQTT():
         try:
             client.loop_start()
             #Connect to the MQTT broker
-            connectMQTTBrokerAndWait(client, MQTT_BROKER_IP)
+            connectMQTTBrokerAndWait(client, MQTT_BROKER_IP, MQTT_BROKER_PORT)
             #Execute if connection was successfully
             if mqttClientData.connectionReturnCode == 0:
                 #Transmit all entries from the queue
@@ -377,7 +377,7 @@ def publishEventDataToMQTT():
                     if item is None:
                         continue
                     publishMQTTData(client, MQTT_TOPIC_PUBLISH, item)
-                    #Disconnect from MQTT broker           
+                    #Disconnect from MQTT broker
                 disconnectMQTTBrokerAndWait(client)
         except Exception as e:
             client.disconnect()
@@ -403,11 +403,11 @@ def startSubscribeCommandDataFromMQTT():
                 client.username_pw_set(username=MQTT_BROKER_USER,password=MQTT_BROKER_PASSWORD)
             client.will_set(MQTT_TOPIC_PUBLISH.format(STATE_TOPIC), "Offline", 1,retain=True)
             #Connect to the broker
-            client.connect(MQTT_BROKER_IP)            
+            client.connect(MQTT_BROKER_IP, MQTT_BROKER_PORT)
             client.loop_forever()
             startConnectOK = True
         except Exception as e:
-            logging.debug("ERR MQTT Exception (publish event): {}".format(e)) 
+            logging.debug("ERR MQTT Exception (publish event): {}".format(e))
             time.sleep(WAIT_FOR_START_RECONNECT_MQTT_SUBSCRIBE_DELAY)
 #def startSubscribeCommandDataFromMQTT():
 
