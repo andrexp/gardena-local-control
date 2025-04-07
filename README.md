@@ -90,8 +90,8 @@ There are two methods of installation:
 9. Ensure our work is not erased on software upgrade:
 
         echo "/opt" >> /etc/sysupgrade.conf
-        echo "/home/root/.ssh/authorized_keys" >> /etc/sysupgrade.conf
-        echo "/usr/lib/python3.11/site-packages" >> /etc/sysupgrade.conf
+        echo "/root/.ssh/authorized_keys" >> /etc/sysupgrade.conf
+        echo "/usr/lib/python3.12/site-packages" >> /etc/sysupgrade.conf
         echo "/etc/systemd/system/gardenalocalcontrol.service" >> /etc/sysupgrade.conf
         echo "/etc/systemd/system/multi-user.target.wants/gardenalocalcontrol.service" >> /etc/sysupgrade.conf
 
