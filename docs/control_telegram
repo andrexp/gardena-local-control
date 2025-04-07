@@ -125,5 +125,6 @@ Error-Codes
 17 = Charging station blocked
 ? 18 = collision sensor problem rear
 19 = collision sensor problem front
+62 = Battery problem
 70 = Alert! Mower stopped
 71 = Alert! Mower lifted
